@@ -1,0 +1,2057 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Exported Project</title>
+<style></style>
+</head>
+<body>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JobConnect — Post & Bid</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #242836;
+    --accent: #6c5ce7;
+    --accent2: #a29bfe;
+    --green: #00b894;
+    --green2: #55efc4;
+    --red: #d63031;
+    --red2: #ff7675;
+    --orange: #e17055;
+    --yellow: #fdcb6e;
+    --text: #f0f0f0;
+    --text2: #b0b3c0;
+    --text3: #6c6f80;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+
+  /* Header */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--surface2);
+    padding: 12px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    backdrop-filter: blur(20px);
+  }
+
+  .logo {
+    font-size: 1.4rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .role-indicator {
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .role-indicator.client {
+    background: rgba(108, 92, 231, 0.2);
+    color: var(--accent2);
+    border: 1px solid rgba(108, 92, 231, 0.3);
+  }
+
+  .role-indicator.contractor {
+    background: rgba(0, 184, 148, 0.2);
+    color: var(--green2);
+    border: 1px solid rgba(0, 184, 148, 0.3);
+  }
+
+  /* Buttons */
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .btn:active { transform: scale(0.97); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #7c6cf0);
+    color: white;
+  }
+  .btn-primary:hover { box-shadow: 0 4px 16px rgba(108,92,231,0.4); }
+
+  .btn-green {
+    background: linear-gradient(135deg, var(--green), #00d2a0);
+    color: white;
+  }
+  .btn-green:hover { box-shadow: 0 4px 16px rgba(0,184,148,0.4); }
+
+  .btn-red {
+    background: linear-gradient(135deg, var(--red), #e84343);
+    color: white;
+  }
+  .btn-red:hover { box-shadow: 0 4px 16px rgba(214,48,49,0.4); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid var(--surface2);
+  }
+  .btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent2);
+  }
+
+  .btn-sm {
+    padding: 6px 14px;
+    font-size: 0.78rem;
+  }
+
+  .btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1.1rem;
+  }
+
+  /* Role Selection Screen */
+  .role-select {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    gap: 30px;
+  }
+
+  .role-select h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    text-align: center;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .role-select p {
+    color: var(--text2);
+    text-align: center;
+    max-width: 400px;
+    font-size: 0.95rem;
+  }
+
+  .role-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    max-width: 500px;
+    width: 100%;
+  }
+
+  .role-card {
+    background: var(--surface);
+    border: 2px solid var(--surface2);
+    border-radius: var(--radius);
+    padding: 30px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .role-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+  }
+
+  .role-card .icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+  }
+
+  .role-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+  }
+
+  .role-card p {
+    font-size: 0.8rem;
+    color: var(--text3);
+  }
+
+  /* Main Layout */
+  .main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 4px;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    color: var(--text3);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .tab.active {
+    background: var(--accent);
+    color: white;
+  }
+
+  .tab:hover:not(.active) {
+    color: var(--text);
+    background: var(--surface2);
+  }
+
+  /* Post Form */
+  .post-form {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid var(--surface2);
+  }
+
+  .post-form h2 {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .form-group.full {
+    grid-column: 1 / -1;
+  }
+
+  .form-group label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    background: var(--surface2);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    color: var(--text);
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: border-color 0.2s ease;
+    width: 100%;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .form-group select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236c6f80' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  /* Job Card */
+  .job-card {
+    background: var(--surface);
+    border: 1px solid var(--surface2);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+
+  .job-card:hover {
+    border-color: rgba(108,92,231,0.3);
+  }
+
+  .job-card-header {
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+  }
+
+  .job-card-header-left {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .job-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .job-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .tag {
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .tag-industry {
+    background: rgba(108, 92, 231, 0.15);
+    color: var(--accent2);
+  }
+
+  .tag-field {
+    background: rgba(0, 184, 148, 0.15);
+    color: var(--green2);
+  }
+
+  .tag-profession {
+    background: rgba(253, 203, 110, 0.15);
+    color: var(--yellow);
+  }
+
+  .tag-budget {
+    background: rgba(85, 239, 196, 0.15);
+    color: var(--green2);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .job-timer {
+    font-size: 0.72rem;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .job-timer.urgent {
+    color: var(--red2);
+  }
+
+  .job-card-body {
+    padding: 0 20px 16px;
+    display: none;
+  }
+
+  .job-card.expanded .job-card-body {
+    display: block;
+  }
+
+  .job-scope {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    margin-bottom: 14px;
+    font-size: 0.88rem;
+    color: var(--text2);
+    line-height: 1.7;
+    white-space: pre-wrap;
+  }
+
+  .job-scope-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text3);
+    margin-bottom: 6px;
+  }
+
+  .job-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .detail-item {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+  }
+
+  .detail-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text3);
+    margin-bottom: 2px;
+  }
+
+  .detail-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* Bid Section */
+  .bid-section {
+    border-top: 1px solid var(--surface2);
+    padding-top: 14px;
+  }
+
+  .bid-section-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .bid-count {
+    font-size: 0.72rem;
+    color: var(--text3);
+    font-weight: 400;
+  }
+
+  .bid-form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .bid-form input {
+    flex: 1;
+    min-width: 100px;
+    background: var(--surface2);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    color: var(--text);
+    font-size: 0.85rem;
+    font-family: inherit;
+  }
+
+  .bid-form input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .bid-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+
+  .bid-item {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    transition: all 0.2s ease;
+  }
+
+  .bid-item:hover {
+    background: rgba(36,40,54,0.8);
+  }
+
+  .bid-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .bid-contractor {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .bid-amount {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--green2);
+  }
+
+  .bid-message {
+    font-size: 0.78rem;
+    color: var(--text3);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .bid-timeline {
+    font-size: 0.72rem;
+    color: var(--text3);
+  }
+
+  .bid-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  /* Bid Poll / Stats */
+  .bid-poll {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+
+  .bid-poll-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text3);
+    margin-bottom: 10px;
+  }
+
+  .poll-bar-group {
+    margin-bottom: 8px;
+  }
+
+  .poll-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    margin-bottom: 3px;
+    color: var(--text2);
+  }
+
+  .poll-bar-track {
+    height: 6px;
+    background: var(--bg);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .poll-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+
+  .poll-bar-fill.low { background: var(--green); }
+  .poll-bar-fill.mid { background: var(--yellow); }
+  .poll-bar-fill.high { background: var(--orange); }
+  .poll-bar-fill.over { background: var(--red); }
+
+  .poll-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .poll-stat {
+    text-align: center;
+  }
+
+  .poll-stat-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent2);
+  }
+
+  .poll-stat-label {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+  }
+
+  /* WebRTC Chat Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    backdrop-filter: blur(8px);
+  }
+
+  .modal-overlay.active {
+    display: flex;
+  }
+
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 550px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--surface2);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .modal-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-header h3 {
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .connection-status {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--text3);
+    display: inline-block;
+  }
+
+  .connection-status.connected { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .connection-status.connecting { background: var(--yellow); animation: pulse 1s infinite; }
+  .connection-status.disconnected { background: var(--red); }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 200px;
+  }
+
+  .chat-msg {
+    max-width: 80%;
+    padding: 8px 14px;
+    border-radius: 16px;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+
+  .chat-msg.sent {
+    align-self: flex-end;
+    background: var(--accent);
+    color: white;
+    border-bottom-right-radius: 4px;
+  }
+
+  .chat-msg.received {
+    align-self: flex-start;
+    background: var(--surface2);
+    color: var(--text);
+    border-bottom-left-radius: 4px;
+  }
+
+  .chat-msg.system {
+    align-self: center;
+    background: transparent;
+    color: var(--text3);
+    font-size: 0.75rem;
+    font-style: italic;
+    padding: 4px;
+  }
+
+  .chat-msg .msg-time {
+    font-size: 0.62rem;
+    opacity: 0.6;
+    margin-top: 2px;
+    display: block;
+  }
+
+  .modal-footer {
+    padding: 12px 20px;
+    border-top: 1px solid var(--surface2);
+    display: flex;
+    gap: 8px;
+  }
+
+  .modal-footer input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid transparent;
+    border-radius: 24px;
+    padding: 10px 16px;
+    color: var(--text);
+    font-size: 0.88rem;
+    font-family: inherit;
+  }
+
+  .modal-footer input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  /* Signal Modal */
+  .signal-modal .modal-body {
+    gap: 12px;
+  }
+
+  .signal-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .signal-section label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .signal-section textarea {
+    background: var(--surface2);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    color: var(--text);
+    font-size: 0.78rem;
+    font-family: 'Courier New', monospace;
+    resize: vertical;
+    min-height: 80px;
+    width: 100%;
+  }
+
+  .signal-section textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .signal-instructions {
+    background: rgba(108,92,231,0.1);
+    border: 1px solid rgba(108,92,231,0.2);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    font-size: 0.8rem;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  .signal-instructions strong {
+    color: var(--accent2);
+  }
+
+  .signal-instructions ol {
+    padding-left: 18px;
+    margin-top: 6px;
+  }
+
+  /* Username Modal */
+  .username-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 30px;
+    align-items: center;
+  }
+
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text3);
+  }
+
+  .empty-state .icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+    opacity: 0.5;
+  }
+
+  .empty-state h3 {
+    font-size: 1.1rem;
+    color: var(--text2);
+    margin-bottom: 6px;
+  }
+
+  .empty-state p {
+    font-size: 0.85rem;
+  }
+
+  /* Toast */
+  .toast-container {
+    position: fixed;
+    top: 70px;
+    right: 16px;
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .toast {
+    background: var(--surface);
+    border: 1px solid var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    font-size: 0.84rem;
+    color: var(--text);
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: slideIn 0.3s ease;
+    max-width: 340px;
+  }
+
+  .toast.success { border-left: 3px solid var(--green); }
+  .toast.error { border-left: 3px solid var(--red); }
+  .toast.info { border-left: 3px solid var(--accent); }
+
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .job-details-grid { grid-template-columns: 1fr; }
+    .role-cards { grid-template-columns: 1fr; max-width: 300px; }
+    .poll-stats { grid-template-columns: repeat(3, 1fr); }
+    .bid-form { flex-direction: column; }
+    .bid-item { flex-direction: column; align-items: flex-start; }
+    .bid-actions { align-self: flex-end; }
+    .header { flex-wrap: wrap; }
+  }
+
+  /* Expand arrow */
+  .expand-arrow {
+    transition: transform 0.2s ease;
+    color: var(--text3);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  .job-card.expanded .expand-arrow {
+    transform: rotate(180deg);
+  }
+
+  .delete-timer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  /* Contractor name badge in bid */
+  .contractor-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .bid-item-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .hidden { display: none !important; }
+
+  /* Animation for new cards */
+  @keyframes fadeUp {
+    from { transform: translateY(12px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .job-card { animation: fadeUp 0.3s ease; }
+</style>
+</head>
+<body>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Role Selection -->
+<div id="roleScreen" class="role-select">
+  <h1>⚡ JobConnect</h1>
+  <p>A real-time job board connecting clients with skilled contractors. Post jobs, submit bids, and communicate directly.</p>
+  <div class="role-cards">
+    <div class="role-card" onclick="selectRole('client')">
+      <div class="icon">📋</div>
+      <h3>Client</h3>
+      <p>Post jobs and review bids from contractors</p>
+    </div>
+    <div class="role-card" onclick="selectRole('contractor')">
+      <div class="icon">🔧</div>
+      <h3>Contractor</h3>
+      <p>Browse jobs and submit competitive bids</p>
+    </div>
+  </div>
+</div>
+
+<!-- Main App -->
+<div id="appScreen" class="hidden">
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">⚡ JobConnect</div>
+    <div class="header-actions">
+      <span id="usernameDisplay" style="font-size:0.8rem;color:var(--text2)"></span>
+      <span id="roleDisplay" class="role-indicator"></span>
+      <button class="btn btn-outline btn-sm" onclick="switchRole()">Switch Role</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- Client: Post Form -->
+    <div id="postFormSection" class="hidden">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h2 style="font-size:1.1rem;font-weight:700">📋 My Jobs</h2>
+        <button class="btn btn-primary btn-sm" onclick="togglePostForm()">＋ New Job</button>
+      </div>
+
+      <div id="postForm" class="post-form hidden">
+        <h2>📝 Create Job Post</h2>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Job Title</label>
+            <input type="text" id="jobTitle" placeholder="e.g. Website Redesign for E-commerce Store" maxlength="100">
+          </div>
+          <div class="form-group">
+            <label>Industry</label>
+            <select id="jobIndustry">
+              <option value="">Select Industry</option>
+              <option value="Technology">Technology</option>
+              <option value="Construction">Construction</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Finance">Finance</option>
+              <option value="Education">Education</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Manufacturing">Manufacturing</option>
+              <option value="Retail">Retail</option>
+              <option value="Real Estate">Real Estate</option>
+              <option value="Agriculture">Agriculture</option>
+              <option value="Transportation">Transportation</option>
+              <option value="Energy">Energy</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Legal">Legal</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Field</label>
+            <select id="jobField">
+              <option value="">Select Field</option>
+              <option value="Software Development">Software Development</option>
+              <option value="Web Development">Web Development</option>
+              <option value="Mobile Development">Mobile Development</option>
+              <option value="Data Science">Data Science</option>
+              <option value="Design">Design</option>
+              <option value="Project Management">Project Management</option>
+              <option value="Consulting">Consulting</option>
+              <option value="Engineering">Engineering</option>
+              <option value="Electrical">Electrical</option>
+              <option value="Plumbing">Plumbing</option>
+              <option value="Carpentry">Carpentry</option>
+              <option value="Accounting">Accounting</option>
+              <option value="Writing">Writing</option>
+              <option value="Photography">Photography</option>
+              <option value="Landscaping">Landscaping</option>
+              <option value="Cleaning">Cleaning</option>
+              <option value="Security">Security</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Profession / Role Required</label>
+            <input type="text" id="jobProfession" placeholder="e.g. Full-Stack Developer" maxlength="60">
+          </div>
+          <div class="form-group">
+            <label>Budget ($)</label>
+            <input type="number" id="jobBudget" placeholder="e.g. 5000" min="1">
+          </div>
+          <div class="form-group">
+            <label>Timeframe</label>
+            <select id="jobTimeframe">
+              <option value="">Select Timeframe</option>
+              <option value="Less than 1 week">Less than 1 week</option>
+              <option value="1-2 weeks">1-2 weeks</option>
+              <option value="2-4 weeks">2-4 weeks</option>
+              <option value="1-2 months">1-2 months</option>
+              <option value="2-3 months">2-3 months</option>
+              <option value="3-6 months">3-6 months</option>
+              <option value="6+ months">6+ months</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Location</label>
+            <input type="text" id="jobLocation" placeholder="e.g. Remote, New York, etc." maxlength="60">
+          </div>
+          <div class="form-group full">
+            <label>Job Scope — Define the work that needs to be done</label>
+            <textarea id="jobScope" rows="5" placeholder="Describe in detail:&#10;• What needs to be accomplished&#10;• Specific deliverables&#10;• Technical requirements&#10;• Milestones or phases&#10;• Any constraints or preferences" maxlength="2000"></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-outline btn-sm" onclick="togglePostForm()">Cancel</button>
+          <button class="btn btn-primary" onclick="createJob()">Post Job</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs for Contractor -->
+    <div id="contractorTabs" class="hidden">
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('all')">All Jobs</button>
+        <button class="tab" onclick="switchTab('mybids')">My Bids</button>
+      </div>
+    </div>
+
+    <!-- Job List -->
+    <div id="jobList"></div>
+  </div>
+</div>
+
+<!-- WebRTC Chat Modal -->
+<div class="modal-overlay" id="chatModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>
+        <span class="connection-status" id="connStatus"></span>
+        <span id="chatTitle">Secure Channel</span>
+      </h3>
+      <button class="btn btn-red btn-sm" onclick="closeChat()">✕ Close & Remove</button>
+    </div>
+    <div class="modal-body" id="chatMessages"></div>
+    <div class="modal-footer">
+      <input type="text" id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="btn btn-primary btn-sm" onclick="sendChat()">Send</button>
+    </div>
+  </div>
+</div>
+
+<!-- WebRTC Signaling Modal -->
+<div class="modal-overlay" id="signalModal">
+  <div class="modal signal-modal" style="max-width:500px">
+    <div class="modal-header">
+      <h3>🔗 WebRTC Connection Setup</h3>
+      <button class="btn btn-outline btn-icon btn-sm" onclick="closeSignal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="signal-instructions">
+        <strong>Manual Signaling (No Server Required)</strong>
+        <ol id="signalSteps"></ol>
+      </div>
+      <div class="signal-section" id="offerSection" style="display:none">
+        <label>Your Offer/Answer (copy & send to peer)</label>
+        <textarea id="localDesc" readonly onclick="this.select();document.execCommand('copy');showToast('Copied!','success')"></textarea>
+        <button class="btn btn-primary btn-sm" onclick="copySignal('localDesc')">📋 Copy</button>
+      </div>
+      <div class="signal-section" id="remoteSection" style="display:none">
+        <label id="remoteLabel">Paste peer's response here</label>
+        <textarea id="remoteDesc" placeholder="Paste the signaling data here..."></textarea>
+        <button class="btn btn-green btn-sm" id="applyRemoteBtn" onclick="applyRemote()">Apply & Connect</button>
+      </div>
+      <div class="signal-section" id="iceSection" style="display:none">
+        <label>ICE Candidates (copy all & send after connection data)</label>
+        <textarea id="localIce" readonly onclick="this.select();document.execCommand('copy');showToast('Copied!','success')"></textarea>
+        <button class="btn btn-primary btn-sm" onclick="copySignal('localIce')">📋 Copy ICE</button>
+      </div>
+      <div class="signal-section" id="remoteIceSection" style="display:none">
+        <label>Paste peer's ICE candidates here</label>
+        <textarea id="remoteIce" placeholder="Paste ICE candidates..."></textarea>
+        <button class="btn btn-green btn-sm" onclick="applyRemoteIce()">Apply ICE</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ================ WEB WORKER (via Blob URL) ================
+const workerCode = `
+  // Job expiration worker
+  // Manages timers and sends messages when jobs expire
+
+  const jobTimers = new Map();
+  const SIX_HOURS = 6 * 60 * 60 * 1000;
+
+  self.onmessage = function(e) {
+    const { type, jobId, createdAt } = e.data;
+
+    switch(type) {
+      case 'REGISTER_JOB': {
+        if (jobTimers.has(jobId)) {
+          clearTimeout(jobTimers.get(jobId).timeout);
+        }
+        const elapsed = Date.now() - createdAt;
+        const remaining = Math.max(0, SIX_HOURS - elapsed);
+
+        const timeout = setTimeout(() => {
+          self.postMessage({ type: 'JOB_EXPIRED', jobId });
+          jobTimers.delete(jobId);
+        }, remaining);
+
+        jobTimers.set(jobId, { timeout, createdAt });
+
+        // Send periodic time updates every second
+        break;
+      }
+
+      case 'REMOVE_JOB': {
+        if (jobTimers.has(jobId)) {
+          clearTimeout(jobTimers.get(jobId).timeout);
+          jobTimers.delete(jobId);
+        }
+        break;
+      }
+
+      case 'TICK': {
+        // Calculate remaining times for all jobs
+        const updates = [];
+        const now = Date.now();
+        for (const [id, data] of jobTimers) {
+          const remaining = Math.max(0, SIX_HOURS - (now - data.createdAt));
+          updates.push({ jobId: id, remaining });
+          if (remaining <= 0) {
+            self.postMessage({ type: 'JOB_EXPIRED', jobId: id });
+            clearTimeout(data.timeout);
+            jobTimers.delete(id);
+          }
+        }
+        self.postMessage({ type: 'TIME_UPDATE', updates });
+        break;
+      }
+    }
+  };
+
+  // Tick every second
+  setInterval(() => {
+    self.postMessage({ type: 'REQUEST_TICK' });
+  }, 1000);
+`;
+
+const workerBlob = new Blob([workerCode], { type: 'application/javascript' });
+const workerUrl = URL.createObjectURL(workerBlob);
+const worker = new Worker(workerUrl);
+
+// ================ APP STATE ================
+let state = {
+  role: null,
+  username: '',
+  jobs: JSON.parse(localStorage.getItem('jc_jobs') || '[]'),
+  currentTab: 'all',
+  chatJobId: null,
+};
+
+// WebRTC state
+let peerConnection = null;
+let dataChannel = null;
+let localIceCandidates = [];
+let isInitiator = false;
+let pendingChatJobId = null;
+
+// ================ WORKER MESSAGE HANDLING ================
+worker.onmessage = function(e) {
+  const { type } = e.data;
+  
+  if (type === 'JOB_EXPIRED') {
+    removeJob(e.data.jobId, true);
+  } else if (type === 'TIME_UPDATE') {
+    e.data.updates.forEach(u => {
+      const el = document.getElementById(`timer-${u.jobId}`);
+      if (el) {
+        el.textContent = formatTime(u.remaining);
+        el.parentElement.className = u.remaining < 600000 ? 'job-timer urgent' : 'job-timer';
+      }
+    });
+  } else if (type === 'REQUEST_TICK') {
+    worker.postMessage({ type: 'TICK' });
+  }
+};
+
+// Register existing jobs with worker
+function registerJobsWithWorker() {
+  state.jobs.forEach(job => {
+    worker.postMessage({ type: 'REGISTER_JOB', jobId: job.id, createdAt: job.createdAt });
+  });
+}
+
+// ================ UTILITIES ================
+function generateId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2, 8);
+}
+
+function formatTime(ms) {
+  if (ms <= 0) return 'Expired';
+  const h = Math.floor(ms / 3600000);
+  const m = Math.floor((ms % 3600000) / 60000);
+  const s = Math.floor((ms % 60000) / 1000);
+  if (h > 0) return `${h}h ${m}m remaining`;
+  if (m > 0) return `${m}m ${s}s remaining`;
+  return `${s}s remaining`;
+}
+
+function formatCurrency(n) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
+}
+
+function hashColor(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  const colors = ['#6c5ce7','#00b894','#e17055','#0984e3','#d63031','#fdcb6e','#e84393','#00cec9'];
+  return colors[Math.abs(hash) % colors.length];
+}
+
+function saveJobs() {
+  localStorage.setItem('jc_jobs', JSON.stringify(state.jobs));
+}
+
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3500);
+}
+
+// ================ ROLE MANAGEMENT ================
+function selectRole(role) {
+  state.role = role;
+  const savedName = localStorage.getItem('jc_username');
+  if (savedName) {
+    state.username = savedName;
+    initApp();
+  } else {
+    const name = prompt(`Enter your ${role} name:`, '');
+    if (name && name.trim()) {
+      state.username = name.trim();
+      localStorage.setItem('jc_username', state.username);
+      initApp();
+    }
+  }
+}
+
+function switchRole() {
+  closeChat();
+  closeSignal();
+  document.getElementById('appScreen').classList.add('hidden');
+  document.getElementById('roleScreen').classList.remove('hidden');
+  state.role = null;
+}
+
+function initApp() {
+  document.getElementById('roleScreen').classList.add('hidden');
+  document.getElementById('appScreen').classList.remove('hidden');
+  
+  document.getElementById('usernameDisplay').textContent = state.username;
+  const roleDisplay = document.getElementById('roleDisplay');
+  roleDisplay.textContent = state.role;
+  roleDisplay.className = `role-indicator ${state.role}`;
+
+  // Clean expired jobs
+  const now = Date.now();
+  const SIX_HOURS = 6 * 60 * 60 * 1000;
+  state.jobs = state.jobs.filter(j => (now - j.createdAt) < SIX_HOURS);
+  saveJobs();
+
+  if (state.role === 'client') {
+    document.getElementById('postFormSection').classList.remove('hidden');
+    document.getElementById('contractorTabs').classList.add('hidden');
+  } else {
+    document.getElementById('postFormSection').classList.add('hidden');
+    document.getElementById('contractorTabs').classList.remove('hidden');
+  }
+
+  registerJobsWithWorker();
+  renderJobs();
+}
+
+// ================ POST FORM ================
+function togglePostForm() {
+  document.getElementById('postForm').classList.toggle('hidden');
+}
+
+function createJob() {
+  const title = document.getElementById('jobTitle').value.trim();
+  const industry = document.getElementById('jobIndustry').value;
+  const field = document.getElementById('jobField').value;
+  const profession = document.getElementById('jobProfession').value.trim();
+  const budget = parseFloat(document.getElementById('jobBudget').value);
+  const timeframe = document.getElementById('jobTimeframe').value;
+  const location = document.getElementById('jobLocation').value.trim();
+  const scope = document.getElementById('jobScope').value.trim();
+
+  if (!title) return showToast('Please enter a job title', 'error');
+  if (!industry) return showToast('Please select an industry', 'error');
+  if (!field) return showToast('Please select a field', 'error');
+  if (!profession) return showToast('Please enter the required profession', 'error');
+  if (!budget || budget <= 0) return showToast('Please enter a valid budget', 'error');
+  if (!timeframe) return showToast('Please select a timeframe', 'error');
+  if (!scope) return showToast('Please describe the job scope', 'error');
+
+  const job = {
+    id: generateId(),
+    title,
+    industry,
+    field,
+    profession,
+    budget,
+    timeframe,
+    location: location || 'Not specified',
+    scope,
+    clientName: state.username,
+    clientId: state.username,
+    createdAt: Date.now(),
+    bids: [],
+    acceptedBid: null,
+  };
+
+  state.jobs.unshift(job);
+  saveJobs();
+  worker.postMessage({ type: 'REGISTER_JOB', jobId: job.id, createdAt: job.createdAt });
+
+  // Reset form
+  ['jobTitle','jobIndustry','jobField','jobProfession','jobBudget','jobTimeframe','jobLocation','jobScope'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el.tagName === 'SELECT') el.selectedIndex = 0;
+    else el.value = '';
+  });
+  togglePostForm();
+  renderJobs();
+  showToast('Job posted successfully!', 'success');
+}
+
+// ================ JOB RENDERING ================
+function renderJobs() {
+  const list = document.getElementById('jobList');
+  let jobs = state.jobs;
+
+  if (state.role === 'client') {
+    jobs = jobs.filter(j => j.clientId === state.username);
+  } else if (state.currentTab === 'mybids') {
+    jobs = jobs.filter(j => j.bids.some(b => b.contractorId === state.username));
+  }
+
+  if (jobs.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">${state.role === 'client' ? '📋' : '🔍'}</div>
+        <h3>${state.role === 'client' ? 'No Jobs Posted Yet' : (state.currentTab === 'mybids' ? 'No Bids Placed Yet' : 'No Jobs Available')}</h3>
+        <p>${state.role === 'client' ? 'Click "+ New Job" to create your first posting.' : 'Check back later for new opportunities.'}</p>
+      </div>
+    `;
+    return;
+  }
+
+  list.innerHTML = jobs.map(job => renderJobCard(job)).join('');
+}
+
+function renderJobCard(job) {
+  const isOwner = state.role === 'client' && job.clientId === state.username;
+  const isContractor = state.role === 'contractor';
+  const hasBid = job.bids.some(b => b.contractorId === state.username);
+  const bidCount = job.bids.length;
+
+  // Bid poll data
+  let pollHtml = '';
+  if (bidCount > 0) {
+    const amounts = job.bids.map(b => b.amount);
+    const min = Math.min(...amounts);
+    const max = Math.max(...amounts);
+    const avg = amounts.reduce((a,b) => a+b, 0) / amounts.length;
+
+    // Distribution for poll bars
+    const ranges = getBidRanges(job.budget, amounts);
+    
+    pollHtml = `
+      <div class="bid-poll">
+        <div class="bid-poll-title">📊 Bid Poll</div>
+        ${ranges.map(r => `
+          <div class="poll-bar-group">
+            <div class="poll-bar-label">
+              <span>${r.label}</span>
+              <span>${r.count} bid${r.count !== 1 ? 's' : ''}</span>
+            </div>
+            <div class="poll-bar-track">
+              <div class="poll-bar-fill ${r.colorClass}" style="width:${r.pct}%"></div>
+            </div>
+          </div>
+        `).join('')}
+        <div class="poll-stats">
+          <div class="poll-stat">
+            <div class="poll-stat-value">${formatCurrency(min)}</div>
+            <div class="poll-stat-label">Lowest</div>
+          </div>
+          <div class="poll-stat">
+            <div class="poll-stat-value">${formatCurrency(avg)}</div>
+            <div class="poll-stat-label">Average</div>
+          </div>
+          <div class="poll-stat">
+            <div class="poll-stat-value">${formatCurrency(max)}</div>
+            <div class="poll-stat-label">Highest</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Bid form for contractors
+  let bidFormHtml = '';
+  if (isContractor && !hasBid && !job.acceptedBid) {
+    bidFormHtml = `
+      <div class="bid-form">
+        <input type="number" id="bidAmount-${job.id}" placeholder="Your bid ($)" min="1">
+        <input type="text" id="bidTimeline-${job.id}" placeholder="Your timeline" maxlength="50">
+        <input type="text" id="bidMsg-${job.id}" placeholder="Brief message" maxlength="200">
+        <button class="btn btn-green btn-sm" onclick="placeBid('${job.id}')">Submit Bid</button>
+      </div>
+    `;
+  } else if (isContractor && hasBid && !job.acceptedBid) {
+    bidFormHtml = `<div style="font-size:0.8rem;color:var(--green2);margin-bottom:10px">✓ You've placed a bid on this job</div>`;
+  }
+
+  // Accepted bid notice
+  let acceptedHtml = '';
+  if (job.acceptedBid) {
+    const ab = job.bids.find(b => b.id === job.acceptedBid);
+    if (ab) {
+      const isMe = ab.contractorId === state.username || isOwner;
+      acceptedHtml = `
+        <div style="background:rgba(0,184,148,0.1);border:1px solid rgba(0,184,148,0.3);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px;">
+          <div style="font-size:0.82rem;font-weight:700;color:var(--green2);margin-bottom:4px">✅ Bid Accepted — ${ab.contractorName} at ${formatCurrency(ab.amount)}</div>
+          ${isMe ? `<button class="btn btn-primary btn-sm" onclick="openSignaling('${job.id}', ${isOwner})">🔗 Open Secure Channel</button>` : `<div style="font-size:0.78rem;color:var(--text3)">A bid has been accepted for this job.</div>`}
+        </div>
+      `;
+    }
+  }
+
+  // Bids list
+  let bidsListHtml = '';
+  if (bidCount > 0) {
+    bidsListHtml = `
+      <div class="bid-list">
+        ${job.bids.map(bid => `
+          <div class="bid-item" id="bid-${bid.id}">
+            <div class="bid-item-main">
+              <div class="contractor-badge" style="background:${hashColor(bid.contractorName)}">${bid.contractorName.charAt(0).toUpperCase()}</div>
+              <div class="bid-info">
+                <div class="bid-contractor">${bid.contractorName}</div>
+                <div class="bid-message">${bid.message || 'No message'}</div>
+                <div class="bid-timeline">⏱ ${bid.timeline || 'Not specified'}</div>
+              </div>
+              <div class="bid-amount">${formatCurrency(bid.amount)}</div>
+            </div>
+            <div class="bid-actions">
+              ${isOwner && !job.acceptedBid ? `<button class="btn btn-green btn-sm" onclick="acceptBid('${job.id}','${bid.id}')">Accept</button>` : ''}
+              ${job.acceptedBid === bid.id ? '<span style="font-size:0.72rem;color:var(--green2);font-weight:600">✅ ACCEPTED</span>' : ''}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  return `
+    <div class="job-card" id="job-${job.id}">
+      <div class="job-card-header" onclick="toggleJob('${job.id}')">
+        <div class="job-card-header-left">
+          <div class="job-title">
+            ${job.title}
+            <span class="tag tag-budget">${formatCurrency(job.budget)}</span>
+          </div>
+          <div class="job-meta">
+            <span class="tag tag-industry">${job.industry}</span>
+            <span class="tag tag-field">${job.field}</span>
+            <span class="tag tag-profession">${job.profession}</span>
+            <span class="job-timer" id="timerWrap-${job.id}">
+              ⏳ <span id="timer-${job.id}">--</span>
+            </span>
+          </div>
+        </div>
+        <div class="delete-timer">
+          ${isOwner ? `<button class="btn btn-red btn-icon btn-sm" onclick="event.stopPropagation();removeJob('${job.id}')" title="Delete Job">🗑</button>` : ''}
+          <span class="expand-arrow">▼</span>
+        </div>
+      </div>
+      <div class="job-card-body">
+        <div class="job-details-grid">
+          <div class="detail-item">
+            <div class="detail-label">Posted By</div>
+            <div class="detail-value">${job.clientName}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Timeframe</div>
+            <div class="detail-value">${job.timeframe}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Location</div>
+            <div class="detail-value">${job.location}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Bids</div>
+            <div class="detail-value">${bidCount} received</div>
+          </div>
+        </div>
+        <div class="job-scope-label">📑 Scope of Work</div>
+        <div class="job-scope">${escapeHtml(job.scope)}</div>
+        
+        ${acceptedHtml}
+        ${pollHtml}
+
+        <div class="bid-section">
+          <div class="bid-section-title">
+            <span>💰 Bids</span>
+            <span class="bid-count">${bidCount} total</span>
+          </div>
+          ${bidFormHtml}
+          ${bidsListHtml}
+          ${bidCount === 0 ? '<div style="font-size:0.82rem;color:var(--text3);text-align:center;padding:16px">No bids yet</div>' : ''}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function getBidRanges(budget, amounts) {
+  const ranges = [
+    { label: `Under ${formatCurrency(budget * 0.5)}`, min: 0, max: budget * 0.5, colorClass: 'low', count: 0 },
+    { label: `${formatCurrency(budget * 0.5)} - ${formatCurrency(budget * 0.8)}`, min: budget * 0.5, max: budget * 0.8, colorClass: 'mid', count: 0 },
+    { label: `${formatCurrency(budget * 0.8)} - ${formatCurrency(budget)}`, min: budget * 0.8, max: budget, colorClass: 'high', count: 0 },
+    { label: `Over ${formatCurrency(budget)}`, min: budget, max: Infinity, colorClass: 'over', count: 0 },
+  ];
+
+  amounts.forEach(a => {
+    for (const r of ranges) {
+      if (a >= r.min && a < r.max) { r.count++; break; }
+      if (r.max === Infinity && a >= r.min) { r.count++; break; }
+    }
+  });
+
+  const maxCount = Math.max(1, ...ranges.map(r => r.count));
+  ranges.forEach(r => r.pct = (r.count / maxCount) * 100);
+  return ranges;
+}
+
+// ================ JOB INTERACTIONS ================
+function toggleJob(jobId) {
+  const card = document.getElementById(`job-${jobId}`);
+  if (card) card.classList.toggle('expanded');
+}
+
+function removeJob(jobId, isExpiry = false) {
+  state.jobs = state.jobs.filter(j => j.id !== jobId);
+  saveJobs();
+  worker.postMessage({ type: 'REMOVE_JOB', jobId });
+  renderJobs();
+  if (isExpiry) showToast('A job posting has expired (6h limit)', 'info');
+  else showToast('Job removed', 'success');
+
+  // If chat was open for this job, close it
+  if (state.chatJobId === jobId) {
+    closeChat();
+  }
+}
+
+function placeBid(jobId) {
+  const amount = parseFloat(document.getElementById(`bidAmount-${jobId}`).value);
+  const timeline = document.getElementById(`bidTimeline-${jobId}`).value.trim();
+  const message = document.getElementById(`bidMsg-${jobId}`).value.trim();
+
+  if (!amount || amount <= 0) return showToast('Enter a valid bid amount', 'error');
+
+  const job = state.jobs.find(j => j.id === jobId);
+  if (!job) return showToast('Job not found', 'error');
+  if (job.acceptedBid) return showToast('A bid has already been accepted', 'error');
+  if (job.bids.some(b => b.contractorId === state.username)) return showToast('You already bid on this job', 'error');
+
+  job.bids.push({
+    id: generateId(),
+    contractorId: state.username,
+    contractorName: state.username,
+    amount,
+    timeline: timeline || 'Flexible',
+    message: message || '',
+    createdAt: Date.now(),
+  });
+
+  saveJobs();
+  renderJobs();
+  showToast('Bid submitted!', 'success');
+}
+
+function acceptBid(jobId, bidId) {
+  const job = state.jobs.find(j => j.id === jobId);
+  if (!job) return;
+  if (job.clientId !== state.username) return showToast('Only the job owner can accept bids', 'error');
+
+  job.acceptedBid = bidId;
+  saveJobs();
+  renderJobs();
+  showToast('Bid accepted! You can now open a secure channel.', 'success');
+}
+
+// ================ TABS ================
+function switchTab(tab) {
+  state.currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  renderJobs();
+}
+
+// ================ WEBRTC ================
+const rtcConfig = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+  ]
+};
+
+function openSignaling(jobId, amInitiator) {
+  isInitiator = amInitiator;
+  pendingChatJobId = jobId;
+  localIceCandidates = [];
+
+  // Reset signal UI
+  document.getElementById('localDesc').value = '';
+  document.getElementById('remoteDesc').value = '';
+  document.getElementById('localIce').value = '';
+  document.getElementById('remoteIce').value = '';
+
+  const steps = document.getElementById('signalSteps');
+  
+  if (isInitiator) {
+    steps.innerHTML = `
+      <li>Click below — your <strong>Offer</strong> will be generated</li>
+      <li>Copy the offer and send it to the contractor (via any messaging app)</li>
+      <li>The contractor pastes it on their end and generates an <strong>Answer</strong></li>
+      <li>They send the answer back — paste it below</li>
+      <li>Exchange <strong>ICE candidates</strong> the same way</li>
+      <li>Connection established! 🎉</li>
+    `;
+  } else {
+    steps.innerHTML = `
+      <li>Ask the client to generate an <strong>Offer</strong> and send it to you</li>
+      <li>Paste the offer below</li>
+      <li>Your <strong>Answer</strong> will be generated — copy and send it back</li>
+      <li>Exchange <strong>ICE candidates</strong></li>
+      <li>Connection established! 🎉</li>
+    `;
+  }
+
+  document.getElementById('signalModal').classList.add('active');
+
+  // Create peer connection
+  createPeerConnection();
+
+  if (isInitiator) {
+    createOffer();
+  } else {
+    // Show remote paste section for incoming offer
+    document.getElementById('remoteSection').style.display = 'flex';
+    document.getElementById('remoteLabel').textContent = "Paste the client's Offer here";
+    document.getElementById('applyRemoteBtn').textContent = 'Generate Answer';
+    document.getElementById('offerSection').style.display = 'none';
+  }
+}
+
+function createPeerConnection() {
+  if (peerConnection) {
+    peerConnection.close();
+  }
+
+  peerConnection = new RTCPeerConnection(rtcConfig);
+  localIceCandidates = [];
+
+  peerConnection.onicecandidate = (event) => {
+    if (event.candidate) {
+      localIceCandidates.push(event.candidate);
+      document.getElementById('localIce').value = JSON.stringify(localIceCandidates);
+      document.getElementById('iceSection').style.display = 'flex';
+      document.getElementById('remoteIceSection').style.display = 'flex';
+    }
+  };
+
+  peerConnection.oniceconnectionstatechange = () => {
+    const s = peerConnection.iceConnectionState;
+    updateConnectionStatus(s);
+    if (s === 'connected' || s === 'completed') {
+      closeSignal();
+      openChatModal();
+    } else if (s === 'failed' || s === 'disconnected') {
+      showToast('Connection lost', 'error');
+    }
+  };
+
+  peerConnection.ondatachannel = (event) => {
+    dataChannel = event.channel;
+    setupDataChannel();
+  };
+
+  if (isInitiator) {
+    dataChannel = peerConnection.createDataChannel('chat');
+    setupDataChannel();
+  }
+}
+
+function setupDataChannel() {
+  dataChannel.onopen = () => {
+    addChatMessage('system', 'Secure channel established. You can now exchange details.');
+    updateConnectionStatus('connected');
+  };
+
+  dataChannel.onclose = () => {
+    addChatMessage('system', 'Channel closed.');
+    updateConnectionStatus('disconnected');
+  };
+
+  dataChannel.onmessage = (event) => {
+    try {
+      const msg = JSON.parse(event.data);
+      addChatMessage('received', msg.text, msg.sender);
+    } catch {
+      addChatMessage('received', event.data, 'Peer');
+    }
+  };
+}
+
+async function createOffer() {
+  try {
+    const offer = await peerConnection.createOffer();
+    await peerConnection.setLocalDescription(offer);
+    document.getElementById('localDesc').value = JSON.stringify(peerConnection.localDescription);
+    document.getElementById('offerSection').style.display = 'flex';
+    document.getElementById('remoteSection').style.display = 'flex';
+    document.getElementById('remoteLabel').textContent = "Paste the contractor's Answer here";
+    document.getElementById('applyRemoteBtn').textContent = 'Apply Answer';
+    showToast('Offer generated — copy and send to peer', 'info');
+  } catch (err) {
+    showToast('Error creating offer: ' + err.message, 'error');
+  }
+}
+
+async function applyRemote() {
+  const raw = document.getElementById('remoteDesc').value.trim();
+  if (!raw) return showToast('Paste the signaling data first', 'error');
+
+  try {
+    const desc = JSON.parse(raw);
+    await peerConnection.setRemoteDescription(new RTCSessionDescription(desc));
+
+    if (!isInitiator) {
+      // Generate answer
+      const answer = await peerConnection.createAnswer();
+      await peerConnection.setLocalDescription(answer);
+      document.getElementById('localDesc').value = JSON.stringify(peerConnection.localDescription);
+      document.getElementById('offerSection').style.display = 'flex';
+      showToast('Answer generated — copy and send back to client', 'info');
+    } else {
+      showToast('Answer applied! Exchange ICE candidates to complete connection.', 'success');
+    }
+  } catch (err) {
+    showToast('Invalid signaling data: ' + err.message, 'error');
+  }
+}
+
+async function applyRemoteIce() {
+  const raw = document.getElementById('remoteIce').value.trim();
+  if (!raw) return showToast('Paste ICE candidates first', 'error');
+
+  try {
+    const candidates = JSON.parse(raw);
+    for (const c of candidates) {
+      await peerConnection.addIceCandidate(new RTCIceCandidate(c));
+    }
+    showToast('ICE candidates applied!', 'success');
+  } catch (err) {
+    showToast('Invalid ICE data: ' + err.message, 'error');
+  }
+}
+
+function copySignal(id) {
+  const el = document.getElementById(id);
+  el.select();
+  document.execCommand('copy');
+  showToast('Copied to clipboard!', 'success');
+}
+
+function closeSignal() {
+  document.getElementById('signalModal').classList.remove('active');
+}
+
+// ================ CHAT ================
+function openChatModal() {
+  state.chatJobId = pendingChatJobId;
+  const job = state.jobs.find(j => j.id === state.chatJobId);
+  document.getElementById('chatTitle').textContent = job ? `Chat — ${job.title}` : 'Secure Channel';
+  document.getElementById('chatMessages').innerHTML = '';
+  addChatMessage('system', '🔒 End-to-end encrypted channel active. Share project details securely.');
+  document.getElementById('chatModal').classList.add('active');
+  document.getElementById('chatInput').focus();
+}
+
+function sendChat() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  if (!dataChannel || dataChannel.readyState !== 'open') {
+    return showToast('Channel not connected', 'error');
+  }
+
+  const msg = { text, sender: state.username, time: Date.now() };
+  dataChannel.send(JSON.stringify(msg));
+  addChatMessage('sent', text);
+  input.value = '';
+  input.focus();
+}
+
+function addChatMessage(type, text, sender = '') {
+  const container = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = `chat-msg ${type}`;
+
+  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  if (type === 'system') {
+    div.textContent = text;
+  } else {
+    div.innerHTML = `${sender ? `<strong style="font-size:0.72rem;display:block;opacity:0.7;margin-bottom:2px">${escapeHtml(sender)}</strong>` : ''}${escapeHtml(text)}<span class="msg-time">${time}</span>`;
+  }
+
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function updateConnectionStatus(status) {
+  const el = document.getElementById('connStatus');
+  el.className = 'connection-status';
+  if (status === 'connected' || status === 'completed') el.classList.add('connected');
+  else if (status === 'checking' || status === 'new') el.classList.add('connecting');
+  else el.classList.add('disconnected');
+}
+
+function closeChat() {
+  document.getElementById('chatModal').classList.remove('active');
+
+  if (dataChannel) {
+    try { dataChannel.close(); } catch {}
+    dataChannel = null;
+  }
+  if (peerConnection) {
+    try { peerConnection.close(); } catch {}
+    peerConnection = null;
+  }
+
+  // Remove the job after connection closes
+  if (state.chatJobId) {
+    removeJob(state.chatJobId);
+    state.chatJobId = null;
+    showToast('Chat closed — job post removed', 'info');
+  }
+}
+
+// ================ STORAGE SYNC ================
+// Listen for storage changes from other tabs
+window.addEventListener('storage', (e) => {
+  if (e.key === 'jc_jobs') {
+    state.jobs = JSON.parse(e.newValue || '[]');
+    renderJobs();
+  }
+});
+
+// Periodic refresh for multi-tab consistency
+setInterval(() => {
+  const stored = JSON.parse(localStorage.getItem('jc_jobs') || '[]');
+  if (JSON.stringify(stored) !== JSON.stringify(state.jobs)) {
+    state.jobs = stored;
+    renderJobs();
+  }
+}, 2000);
+
+// Initial worker tick
+worker.postMessage({ type: 'TICK' });
+
+// ================ DEMO DATA ================
+// Seed some demo jobs if empty
+if (state.jobs.length === 0) {
+  const demoJobs = [
+    {
+      id: generateId(),
+      title: 'E-Commerce Website Development',
+      industry: 'Technology',
+      field: 'Web Development',
+      profession: 'Full-Stack Developer',
+      budget: 8000,
+      timeframe: '1-2 months',
+      location: 'Remote',
+      scope: `Build a complete e-commerce platform with the following requirements:\n\n• Product catalog with categories and search\n• Shopping cart and checkout flow\n• Stripe payment integration\n• User accounts and order history\n• Admin dashboard for inventory management\n• Mobile-responsive design\n• SEO optimization\n\nTech stack preference: React + Node.js + PostgreSQL`,
+      clientName: 'Sarah M.',
+      clientId: 'Sarah M.',
+      createdAt: Date.now() - 3600000,
+      bids: [
+        { id: generateId(), contractorId: 'DevPro_Alex', contractorName: 'Alex K.', amount: 7500, timeline: '6 weeks', message: '10+ years experience with e-commerce platforms. Portfolio available.', createdAt: Date.now() - 3000000 },
+        { id: generateId(), contractorId: 'WebWiz_Maria', contractorName: 'Maria L.', amount: 6800, timeline: '8 weeks', message: 'Specialized in React e-commerce. Previous Shopify-level builds.', createdAt: Date.now() - 2400000 },
+        { id: generateId(), contractorId: 'CodeCraft_Jay', contractorName: 'Jay P.', amount: 9200, timeline: '5 weeks', message: 'Fast delivery with premium quality. Includes 3 months support.', createdAt: Date.now() - 1800000 },
+      ],
+      acceptedBid: null,
+    },
+    {
+      id: generateId(),
+      title: 'Kitchen Renovation Project Management',
+      industry: 'Construction',
+      field: 'Project Management',
+      profession: 'General Contractor',
+      budget: 25000,
+      timeframe: '2-3 months',
+      location: 'Austin, TX',
+      scope: `Full kitchen renovation including:\n\n• Demolition of existing kitchen\n• New cabinet installation (shaker style)\n• Granite countertop installation\n• Electrical work for new appliance locations\n• Plumbing for relocated sink\n• Tile backsplash\n• New flooring (hardwood)\n• Painting and finishing\n\nAll permits and inspections included. Must be licensed and insured.`,
+      clientName: 'David R.',
+      clientId: 'David R.',
+      createdAt: Date.now() - 7200000,
+      bids: [
+        { id: generateId(), contractorId: 'BuildRight_Tom', contractorName: 'Tom B.', amount: 23000, timeline: '10 weeks', message: 'Licensed GC with 15 years experience. Full crew available.', createdAt: Date.now() - 6000000 },
+      ],
+      acceptedBid: null,
+    },
+  ];
+
+  state.jobs = demoJobs;
+  saveJobs();
+}
+</script>
+</body>
+</html>
+<script>
+
+</script>
+</body>
+</html>
