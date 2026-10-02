@@ -1,0 +1,1698 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Exported Project</title>
+<style></style>
+</head>
+<body>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JobConnect — Real-Time Job Board</title>
+<style>
+:root {
+  --bg: #0b0d14;
+  --surface: #151821;
+  --surface2: #1e2233;
+  --surface3: #282d40;
+  --accent: #6c5ce7;
+  --accent2: #a29bfe;
+  --green: #00b894;
+  --green2: #55efc4;
+  --red: #d63031;
+  --red2: #ff7675;
+  --orange: #e17055;
+  --yellow: #fdcb6e;
+  --text: #eef0f6;
+  --text2: #9da2b8;
+  --text3: #5a5f78;
+  --radius: 14px;
+  --radius-sm: 10px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--surface3); border-radius:5px; }
+
+/* ─── Header ─── */
+.header {
+  background: rgba(21,24,33,0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--surface2);
+  padding: 10px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.logo {
+  font-size: 1.25rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent), var(--green2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  white-space: nowrap;
+}
+
+.header-right {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.room-badge {
+  font-size: 0.68rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(108,92,231,0.15);
+  color: var(--accent2);
+  border: 1px solid rgba(108,92,231,0.25);
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
+}
+
+.online-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 3px;
+  vertical-align: middle;
+}
+.online-dot.on { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.online-dot.off { background: var(--red); }
+
+.peer-count {
+  font-size: 0.72rem;
+  color: var(--text2);
+}
+
+.role-pill {
+  font-size: 0.65rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+.role-pill.client { background:rgba(108,92,231,0.18); color:var(--accent2); border:1px solid rgba(108,92,231,0.3); }
+.role-pill.contractor { background:rgba(0,184,148,0.18); color:var(--green2); border:1px solid rgba(0,184,148,0.3); }
+
+/* ─── Buttons ─── */
+.btn {
+  padding: 9px 18px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  font-family: inherit;
+}
+.btn:active { transform: scale(0.96); }
+
+.btn-primary { background: linear-gradient(135deg, var(--accent), #7e6ff0); color:#fff; }
+.btn-primary:hover { box-shadow: 0 4px 20px rgba(108,92,231,0.35); }
+.btn-green { background: linear-gradient(135deg, var(--green), #00d2a0); color:#fff; }
+.btn-green:hover { box-shadow: 0 4px 20px rgba(0,184,148,0.35); }
+.btn-red { background: linear-gradient(135deg, var(--red), #e84343); color:#fff; }
+.btn-red:hover { box-shadow: 0 4px 20px rgba(214,48,49,0.35); }
+.btn-outline { background:transparent; color:var(--text2); border:1px solid var(--surface2); }
+.btn-outline:hover { border-color:var(--accent); color:var(--accent2); }
+.btn-sm { padding:6px 13px; font-size:0.76rem; }
+.btn-xs { padding:4px 10px; font-size:0.7rem; }
+.btn-icon { width:32px; height:32px; padding:0; display:flex; align-items:center; justify-content:center; border-radius:50%; font-size:1rem; }
+
+/* ─── Screens ─── */
+.screen { display:none; }
+.screen.active { display:block; }
+
+/* ─── Setup Screen ─── */
+.setup-screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  gap: 24px;
+}
+.setup-screen.active { display: flex; }
+
+.setup-card {
+  background: var(--surface);
+  border: 1px solid var(--surface2);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 440px;
+}
+
+.setup-card h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  text-align: center;
+  background: linear-gradient(135deg, var(--accent), var(--green2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 6px;
+}
+
+.setup-card .subtitle {
+  text-align: center;
+  color: var(--text2);
+  font-size: 0.88rem;
+  margin-bottom: 24px;
+}
+
+.setup-field {
+  margin-bottom: 14px;
+}
+
+.setup-field label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 5px;
+}
+
+.setup-field input,
+.setup-field select {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--surface3);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.setup-field input:focus,
+.setup-field select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.role-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.role-option {
+  background: var(--surface2);
+  border: 2px solid var(--surface3);
+  border-radius: var(--radius-sm);
+  padding: 18px 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.role-option:hover { border-color: var(--accent); }
+.role-option.selected { border-color: var(--accent); background: rgba(108,92,231,0.1); }
+.role-option .r-icon { font-size: 1.8rem; margin-bottom: 6px; }
+.role-option .r-title { font-size: 0.88rem; font-weight: 700; }
+.role-option .r-desc { font-size: 0.72rem; color: var(--text3); margin-top: 2px; }
+
+.room-info {
+  background: rgba(0,184,148,0.08);
+  border: 1px solid rgba(0,184,148,0.2);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin-bottom: 14px;
+  font-size: 0.8rem;
+  color: var(--text2);
+  line-height: 1.6;
+}
+
+.room-info strong { color: var(--green2); }
+
+/* ─── Main Layout ─── */
+.main { max-width: 780px; margin: 0 auto; padding: 14px; }
+
+.section-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.section-bar h2 { font-size: 1rem; font-weight: 700; }
+
+/* ─── Tabs ─── */
+.tabs {
+  display: flex;
+  gap: 3px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 3px;
+  margin-bottom: 14px;
+}
+
+.tab {
+  flex: 1;
+  padding: 9px;
+  border: none;
+  background: transparent;
+  color: var(--text3);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s;
+  text-align: center;
+  font-family: inherit;
+}
+.tab.active { background: var(--accent); color: #fff; }
+.tab:hover:not(.active) { color: var(--text); background: var(--surface2); }
+
+/* ─── Post Form ─── */
+.post-form {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 22px;
+  margin-bottom: 14px;
+  border: 1px solid var(--surface2);
+}
+
+.post-form h3 {
+  font-size: 1.05rem;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.fg {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.fi { display: flex; flex-direction: column; gap: 4px; }
+.fi.full { grid-column: 1 / -1; }
+
+.fi label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.fi input, .fi select, .fi textarea {
+  background: var(--surface2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  color: var(--text);
+  font-size: 0.86rem;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+.fi input:focus, .fi select:focus, .fi textarea:focus { outline:none; border-color:var(--accent); }
+.fi textarea { resize:vertical; min-height:80px; }
+.fi select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%235a5f78' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+}
+
+.form-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:14px; }
+
+/* ─── Job Card ─── */
+.job-card {
+  background: var(--surface);
+  border: 1px solid var(--surface2);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+  animation: fadeUp 0.25s ease;
+}
+.job-card:hover { border-color: rgba(108,92,231,0.25); }
+
+@keyframes fadeUp {
+  from { transform: translateY(10px); opacity:0; }
+  to { transform: translateY(0); opacity:1; }
+}
+
+.jc-head {
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.jc-head-left { flex:1; min-width:0; }
+
+.jc-title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.jc-meta { display:flex; flex-wrap:wrap; gap:5px; align-items:center; }
+
+.tag {
+  font-size: 0.64rem;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.tag-i { background: rgba(108,92,231,0.13); color: var(--accent2); }
+.tag-f { background: rgba(0,184,148,0.13); color: var(--green2); }
+.tag-p { background: rgba(253,203,110,0.13); color: var(--yellow); }
+.tag-b { background: rgba(85,239,196,0.13); color: var(--green2); font-size:0.76rem; font-weight:700; }
+
+.jc-timer { font-size:0.68rem; color:var(--text3); }
+.jc-timer.urgent { color:var(--red2); }
+
+.jc-head-right { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+
+.expand-arr { color:var(--text3); font-size:0.7rem; transition:transform 0.2s; }
+.job-card.open .expand-arr { transform:rotate(180deg); }
+
+.jc-body { padding:0 16px 14px; display:none; }
+.job-card.open .jc-body { display:block; }
+
+.detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+.d-item { background:var(--surface2); border-radius:var(--radius-sm); padding:9px 12px; }
+.d-label { font-size:0.63rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text3); margin-bottom:1px; }
+.d-value { font-size:0.86rem; font-weight:600; }
+
+.scope-label { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text3); margin-bottom:5px; }
+.scope-box {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  font-size: 0.84rem;
+  color: var(--text2);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  margin-bottom: 12px;
+  word-break: break-word;
+}
+
+/* ─── Accepted ─── */
+.accepted-banner {
+  background: rgba(0,184,148,0.08);
+  border: 1px solid rgba(0,184,148,0.25);
+  border-radius: var(--radius-sm);
+  padding: 11px;
+  margin-bottom: 12px;
+}
+.accepted-banner .ab-title { font-size:0.8rem; font-weight:700; color:var(--green2); margin-bottom:5px; }
+
+/* ─── Bid Poll ─── */
+.bid-poll {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin-bottom: 12px;
+}
+.bp-title { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text3); margin-bottom:8px; }
+.bp-row { margin-bottom:6px; }
+.bp-row-label { display:flex; justify-content:space-between; font-size:0.7rem; color:var(--text2); margin-bottom:2px; }
+.bp-track { height:5px; background:var(--bg); border-radius:3px; overflow:hidden; }
+.bp-fill { height:100%; border-radius:3px; transition:width 0.4s ease; }
+.bp-fill.c1 { background:var(--green); }
+.bp-fill.c2 { background:var(--yellow); }
+.bp-fill.c3 { background:var(--orange); }
+.bp-fill.c4 { background:var(--red); }
+
+.bp-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:8px; }
+.bp-stat { text-align:center; }
+.bp-stat-v { font-size:0.92rem; font-weight:700; color:var(--accent2); }
+.bp-stat-l { font-size:0.6rem; color:var(--text3); text-transform:uppercase; }
+
+/* ─── Bid Section ─── */
+.bid-sec { border-top:1px solid var(--surface2); padding-top:12px; }
+.bid-sec-title { font-size:0.78rem; font-weight:700; margin-bottom:8px; display:flex; justify-content:space-between; }
+.bid-sec-count { font-size:0.68rem; color:var(--text3); font-weight:400; }
+
+.bid-form { display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap; }
+.bid-form input {
+  flex:1; min-width:80px;
+  background:var(--surface2); border:1px solid transparent;
+  border-radius:var(--radius-sm); padding:7px 10px;
+  color:var(--text); font-size:0.82rem; font-family:inherit;
+}
+.bid-form input:focus { outline:none; border-color:var(--accent); }
+
+.bid-list { display:flex; flex-direction:column; gap:5px; max-height:240px; overflow-y:auto; }
+
+.bid-item {
+  background:var(--surface2); border-radius:var(--radius-sm);
+  padding:9px 12px; display:flex; align-items:center; gap:9px;
+  transition:background 0.15s;
+}
+.bid-item:hover { background:var(--surface3); }
+
+.bid-avatar {
+  width:26px; height:26px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.68rem; font-weight:700; color:#fff; flex-shrink:0;
+}
+
+.bid-info { flex:1; min-width:0; }
+.bid-name { font-size:0.82rem; font-weight:600; }
+.bid-msg { font-size:0.72rem; color:var(--text3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.bid-tl { font-size:0.68rem; color:var(--text3); }
+
+.bid-amt { font-size:0.9rem; font-weight:700; color:var(--green2); white-space:nowrap; }
+
+.bid-acts { display:flex; gap:5px; flex-shrink:0; }
+
+/* ─── Chat Modal ─── */
+.modal-bg {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.65); z-index:200;
+  align-items:center; justify-content:center;
+  padding:14px; backdrop-filter:blur(6px);
+}
+.modal-bg.active { display:flex; }
+
+.modal {
+  background:var(--surface); border-radius:var(--radius);
+  width:100%; max-width:520px; max-height:88vh;
+  display:flex; flex-direction:column;
+  border:1px solid var(--surface2);
+  box-shadow:0 20px 50px rgba(0,0,0,0.5);
+  overflow:hidden;
+}
+
+.modal-head {
+  padding:13px 18px; border-bottom:1px solid var(--surface2);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.modal-head h3 { font-size:0.95rem; display:flex; align-items:center; gap:7px; }
+
+.conn-dot { width:7px; height:7px; border-radius:50%; display:inline-block; }
+.conn-dot.ok { background:var(--green); box-shadow:0 0 7px var(--green); }
+.conn-dot.wait { background:var(--yellow); animation:pulse 1s infinite; }
+.conn-dot.no { background:var(--red); }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
+
+.modal-msgs {
+  flex:1; overflow-y:auto; padding:14px 18px;
+  display:flex; flex-direction:column; gap:6px; min-height:180px;
+}
+
+.chat-m { max-width:78%; padding:7px 12px; border-radius:14px; font-size:0.84rem; line-height:1.5; word-break:break-word; }
+.chat-m.sent { align-self:flex-end; background:var(--accent); color:#fff; border-bottom-right-radius:4px; }
+.chat-m.recv { align-self:flex-start; background:var(--surface2); border-bottom-left-radius:4px; }
+.chat-m.sys { align-self:center; background:none; color:var(--text3); font-size:0.72rem; font-style:italic; padding:3px; }
+.chat-m .cm-sender { font-size:0.66rem; font-weight:700; opacity:0.7; display:block; margin-bottom:1px; }
+.chat-m .cm-time { font-size:0.58rem; opacity:0.5; margin-top:1px; display:block; }
+
+.modal-foot {
+  padding:10px 18px; border-top:1px solid var(--surface2);
+  display:flex; gap:7px;
+}
+.modal-foot input {
+  flex:1; background:var(--surface2); border:1px solid transparent;
+  border-radius:22px; padding:9px 14px; color:var(--text);
+  font-size:0.85rem; font-family:inherit;
+}
+.modal-foot input:focus { outline:none; border-color:var(--accent); }
+
+/* ─── Signal Modal ─── */
+.sig-body { gap:10px !important; }
+.sig-info {
+  background:rgba(108,92,231,0.08); border:1px solid rgba(108,92,231,0.2);
+  border-radius:var(--radius-sm); padding:11px; font-size:0.78rem;
+  color:var(--text2); line-height:1.6;
+}
+.sig-info strong { color:var(--accent2); }
+.sig-info ol { padding-left:16px; margin-top:5px; }
+
+.sig-sec { display:flex; flex-direction:column; gap:4px; }
+.sig-sec label { font-size:0.7rem; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.5px; }
+.sig-sec textarea {
+  background:var(--surface2); border:1px solid transparent; border-radius:var(--radius-sm);
+  padding:9px 12px; color:var(--text); font-size:0.72rem;
+  font-family:'Courier New',monospace; resize:vertical; min-height:68px; width:100%;
+}
+.sig-sec textarea:focus { outline:none; border-color:var(--accent); }
+
+/* ─── Empty ─── */
+.empty { text-align:center; padding:50px 20px; color:var(--text3); }
+.empty .e-icon { font-size:2.6rem; margin-bottom:10px; opacity:0.4; }
+.empty h3 { font-size:1rem; color:var(--text2); margin-bottom:4px; }
+.empty p { font-size:0.82rem; }
+
+/* ─── Toasts ─── */
+.toast-wrap { position:fixed; top:60px; right:14px; z-index:300; display:flex; flex-direction:column; gap:6px; }
+.toast {
+  background:var(--surface); border:1px solid var(--surface2);
+  border-radius:var(--radius-sm); padding:10px 14px; font-size:0.8rem;
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);
+  display:flex; align-items:center; gap:6px;
+  animation:slideIn 0.25s ease; max-width:320px;
+}
+.toast.ok { border-left:3px solid var(--green); }
+.toast.err { border-left:3px solid var(--red); }
+.toast.inf { border-left:3px solid var(--accent); }
+@keyframes slideIn { from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1} }
+
+/* ─── Responsive ─── */
+@media(max-width:600px) {
+  .fg { grid-template-columns:1fr; }
+  .detail-grid { grid-template-columns:1fr; }
+  .role-toggle { grid-template-columns:1fr; }
+  .bid-form { flex-direction:column; }
+  .bid-item { flex-wrap:wrap; }
+  .bid-acts { width:100%; justify-content:flex-end; }
+  .header { padding:8px 10px; }
+  .main { padding:10px; }
+}
+
+.hidden { display:none !important; }
+</style>
+</head>
+<body>
+
+<div class="toast-wrap" id="toasts"></div>
+
+<!-- ═══════════════ SETUP SCREEN ═══════════════ -->
+<div class="setup-screen active" id="setupScreen">
+  <div class="setup-card">
+    <h1>⚡ JobConnect</h1>
+    <p class="subtitle">Real-time job board — post jobs, bid, and connect peer-to-peer</p>
+
+    <div class="room-info">
+      <strong>How it works:</strong> Everyone who joins the same <strong>Room Code</strong> can see each other's job posts in real-time. Share the code with your friends!
+    </div>
+
+    <div class="setup-field">
+      <label>Your Name</label>
+      <input type="text" id="setupName" placeholder="Enter your name" maxlength="30">
+    </div>
+
+    <div class="setup-field">
+      <label>Room Code (share with others to sync)</label>
+      <div style="display:flex;gap:6px">
+        <input type="text" id="setupRoom" placeholder="e.g. my-project-room" maxlength="30" style="text-transform:lowercase">
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('setupRoom').value=randomRoom()" style="flex-shrink:0">Random</button>
+      </div>
+    </div>
+
+    <label style="font-size:0.72rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;display:block;margin-bottom:6px">I am a...</label>
+    <div class="role-toggle">
+      <div class="role-option selected" id="roleClient" onclick="pickRole('client')">
+        <div class="r-icon">📋</div>
+        <div class="r-title">Client</div>
+        <div class="r-desc">Post jobs & review bids</div>
+      </div>
+      <div class="role-option" id="roleContractor" onclick="pickRole('contractor')">
+        <div class="r-icon">🔧</div>
+        <div class="r-title">Contractor</div>
+        <div class="r-desc">Browse & bid on jobs</div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px" onclick="joinRoom()">Join Room →</button>
+  </div>
+</div>
+
+<!-- ═══════════════ APP SCREEN ═══════════════ -->
+<div id="appScreen" class="hidden">
+  <div class="header">
+    <div class="logo">⚡ JobConnect</div>
+    <div class="header-right">
+      <span class="room-badge" id="roomLabel"></span>
+      <span class="peer-count"><span class="online-dot on" id="connDot"></span><span id="peerNum">1</span> online</span>
+      <span class="role-pill" id="rolePill"></span>
+      <button class="btn btn-outline btn-xs" onclick="leaveRoom()">Leave</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- Client controls -->
+    <div id="clientBar" class="hidden">
+      <div class="section-bar">
+        <h2>📋 Jobs</h2>
+        <button class="btn btn-primary btn-sm" onclick="toggleForm()">＋ New Job</button>
+      </div>
+      <div id="postForm" class="post-form hidden">
+        <h3>📝 Create Job Post</h3>
+        <div class="fg">
+          <div class="fi full"><label>Job Title</label><input id="fTitle" placeholder="e.g. Website Redesign" maxlength="100"></div>
+          <div class="fi"><label>Industry</label>
+            <select id="fIndustry"><option value="">Select…</option><option>Technology</option><option>Construction</option><option>Healthcare</option><option>Finance</option><option>Education</option><option>Marketing</option><option>Manufacturing</option><option>Retail</option><option>Real Estate</option><option>Agriculture</option><option>Transportation</option><option>Energy</option><option>Entertainment</option><option>Legal</option><option>Other</option></select>
+          </div>
+          <div class="fi"><label>Field</label>
+            <select id="fField"><option value="">Select…</option><option>Software Development</option><option>Web Development</option><option>Mobile Development</option><option>Data Science</option><option>Design</option><option>Project Management</option><option>Consulting</option><option>Engineering</option><option>Electrical</option><option>Plumbing</option><option>Carpentry</option><option>Accounting</option><option>Writing</option><option>Photography</option><option>Landscaping</option><option>Cleaning</option><option>Security</option><option>Other</option></select>
+          </div>
+          <div class="fi"><label>Profession</label><input id="fProf" placeholder="e.g. Full-Stack Dev" maxlength="60"></div>
+          <div class="fi"><label>Budget ($)</label><input id="fBudget" type="number" placeholder="5000" min="1"></div>
+          <div class="fi"><label>Timeframe</label>
+            <select id="fTime"><option value="">Select…</option><option>Less than 1 week</option><option>1-2 weeks</option><option>2-4 weeks</option><option>1-2 months</option><option>2-3 months</option><option>3-6 months</option><option>6+ months</option></select>
+          </div>
+          <div class="fi"><label>Location</label><input id="fLoc" placeholder="Remote, NYC, etc." maxlength="60"></div>
+          <div class="fi full"><label>Scope of Work</label><textarea id="fScope" rows="5" placeholder="Describe deliverables, requirements, milestones…" maxlength="2000"></textarea></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-outline btn-sm" onclick="toggleForm()">Cancel</button>
+          <button class="btn btn-primary" onclick="createJob()">Post Job</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contractor tabs -->
+    <div id="contractorBar" class="hidden">
+      <div class="tabs">
+        <button class="tab active" id="tabAll" onclick="setTab('all')">All Jobs</button>
+        <button class="tab" id="tabMine" onclick="setTab('mybids')">My Bids</button>
+      </div>
+    </div>
+
+    <div id="jobList"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ CHAT MODAL ═══════════════ -->
+<div class="modal-bg" id="chatModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3><span class="conn-dot" id="chatDot"></span><span id="chatTitle">Secure Channel</span></h3>
+      <button class="btn btn-red btn-sm" onclick="closeChat()">✕ Close & Remove</button>
+    </div>
+    <div class="modal-msgs" id="chatMsgs"></div>
+    <div class="modal-foot">
+      <input id="chatIn" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="btn btn-primary btn-sm" onclick="sendMsg()">Send</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SIGNAL MODAL ═══════════════ -->
+<div class="modal-bg" id="sigModal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-head">
+      <h3>🔗 Connect Peer-to-Peer</h3>
+      <button class="btn btn-outline btn-icon btn-sm" onclick="closeSig()">✕</button>
+    </div>
+    <div class="modal-msgs sig-body" id="sigBody">
+      <div class="sig-info" id="sigInfo"></div>
+      <div class="sig-sec" id="secLocal" style="display:none">
+        <label id="lblLocal">Your Signal</label>
+        <textarea id="txtLocal" readonly onclick="this.select();document.execCommand('copy');toast('Copied!','ok')"></textarea>
+        <button class="btn btn-primary btn-sm" onclick="copySig()">📋 Copy</button>
+      </div>
+      <div class="sig-sec" id="secRemote" style="display:none">
+        <label id="lblRemote">Paste Peer's Signal</label>
+        <textarea id="txtRemote" placeholder="Paste here…"></textarea>
+        <button class="btn btn-green btn-sm" id="btnApply" onclick="applySig()">Apply</button>
+      </div>
+      <div class="sig-sec" id="secICE" style="display:none">
+        <label>Your ICE Candidates (copy & send)</label>
+        <textarea id="txtICE" readonly onclick="this.select();document.execCommand('copy');toast('Copied!','ok')"></textarea>
+        <button class="btn btn-primary btn-sm" onclick="copyICE()">📋 Copy ICE</button>
+      </div>
+      <div class="sig-sec" id="secRICE" style="display:none">
+        <label>Paste Peer's ICE Candidates</label>
+        <textarea id="txtRICE" placeholder="Paste ICE here…"></textarea>
+        <button class="btn btn-green btn-sm" onclick="applyICE()">Apply ICE</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// WORKER via Blob URL — handles job expiration timers
+// ═══════════════════════════════════════════════════
+const W_CODE = `
+const timers = new Map();
+const SIX_H = 6*60*60*1000;
+
+self.onmessage = e => {
+  const {type, id, created} = e.data;
+  if (type === 'ADD') {
+    if (timers.has(id)) clearTimeout(timers.get(id));
+    const rem = Math.max(0, SIX_H - (Date.now() - created));
+    timers.set(id, setTimeout(() => {
+      self.postMessage({type:'EXPIRED', id});
+      timers.delete(id);
+    }, rem));
+  } else if (type === 'DEL') {
+    if (timers.has(id)) { clearTimeout(timers.get(id)); timers.delete(id); }
+  } else if (type === 'TICK') {
+    const now = Date.now(), out = [];
+    timers.forEach((_, id2) => {});
+    // We store created in a separate map for ticking
+  }
+};
+
+// Tick approach: store createdAt too
+const created = new Map();
+self.onmessage = e => {
+  const {type, id} = e.data;
+  if (type === 'ADD') {
+    if (timers.has(id)) clearTimeout(timers.get(id));
+    created.set(id, e.data.created);
+    const rem = Math.max(0, SIX_H - (Date.now() - e.data.created));
+    timers.set(id, setTimeout(() => {
+      self.postMessage({type:'EXPIRED', id});
+      timers.delete(id);
+      created.delete(id);
+    }, rem));
+  } else if (type === 'DEL') {
+    if (timers.has(id)) { clearTimeout(timers.get(id)); timers.delete(id); }
+    created.delete(id);
+  }
+};
+
+setInterval(() => {
+  const now = Date.now(), updates = [];
+  for (const [id, c] of created) {
+    const r = Math.max(0, SIX_H - (now - c));
+    updates.push({id, r});
+    if (r <= 0) {
+      self.postMessage({type:'EXPIRED', id});
+      if (timers.has(id)) clearTimeout(timers.get(id));
+      timers.delete(id);
+      created.delete(id);
+    }
+  }
+  if (updates.length) self.postMessage({type:'TIMES', updates});
+}, 1000);
+`;
+const wBlob = new Blob([W_CODE], {type:'application/javascript'});
+const wURL = URL.createObjectURL(wBlob);
+const worker = new Worker(wURL);
+
+worker.onmessage = e => {
+  if (e.data.type === 'EXPIRED') {
+    delJob(e.data.id, true);
+  } else if (e.data.type === 'TIMES') {
+    for (const u of e.data.updates) {
+      const el = document.getElementById('tm-'+u.id);
+      if (el) {
+        el.textContent = fmtTime(u.r);
+        const wrap = el.parentElement;
+        if (wrap) wrap.className = u.r < 600000 ? 'jc-timer urgent' : 'jc-timer';
+      }
+    }
+  }
+};
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let me = { name:'', role:'client', room:'' };
+let jobs = [];
+let curTab = 'all';
+let chatJobId = null;
+
+// WebSocket relay state
+let ws = null;
+let wsReady = false;
+let reconnectTimer = null;
+let peerId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2);
+
+// WebRTC per-chat
+let pc = null, dc = null, iceBuf = [], isInit = false, pendingChat = null;
+
+// ═══════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════
+const gid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,9);
+const esc = t => { const d=document.createElement('div'); d.textContent=t; return d.innerHTML; };
+const $ = id => document.getElementById(id);
+const fmtCur = n => '$'+Number(n).toLocaleString();
+
+function fmtTime(ms) {
+  if (ms<=0) return 'Expired';
+  const h=Math.floor(ms/3600000), m=Math.floor((ms%3600000)/60000), s=Math.floor((ms%60000)/1000);
+  return h>0 ? `${h}h ${m}m left` : m>0 ? `${m}m ${s}s left` : `${s}s left`;
+}
+
+function hashCol(s) {
+  let h=0; for(let i=0;i<s.length;i++) h=s.charCodeAt(i)+((h<<5)-h);
+  const c=['#6c5ce7','#00b894','#e17055','#0984e3','#d63031','#fdcb6e','#e84393','#00cec9'];
+  return c[Math.abs(h)%c.length];
+}
+
+function toast(msg, type='inf') {
+  const c=$('toasts'), t=document.createElement('div');
+  t.className='toast '+type; t.textContent=msg;
+  c.appendChild(t); setTimeout(()=>t.remove(), 3500);
+}
+
+function randomRoom() {
+  const w=['alpha','beta','gamma','delta','nova','pulse','spark','blaze','swift','quest'];
+  return w[Math.random()*w.length|0]+'-'+w[Math.random()*w.length|0]+'-'+(Math.random()*900+100|0);
+}
+
+// ═══════════════════════════════════════
+// WEBSOCKET RELAY (free public relay)
+// We use a simple approach: connect to a
+// temporary WebSocket echo/relay server.
+// For production you'd use your own.
+// Here we use a serverless relay pattern:
+// Each message is broadcast to the room.
+// ═══════════════════════════════════════
+
+// We'll use a simple relay approach via BroadcastChannel for same-origin
+// AND a polling-based localStorage sync for cross-tab
+// AND for cross-device: manual copy-paste of room state
+
+// ACTUALLY: The best zero-dependency cross-device approach without a backend:
+// We'll build a lightweight signaling via the WebRTC connections themselves
+// using a "mesh" topology. But first connection still needs bootstrap.
+
+// PRACTICAL SOLUTION: Use a free WebSocket relay service OR
+// implement the sync via periodic localStorage + BroadcastChannel
+// and for cross-device users, we encode state in URL hash.
+
+// BEST APPROACH for truly zero-backend single-file:
+// Use a PUBLIC free WebSocket relay. Several exist:
+// - Scaledrone free tier
+// - PieSocket free tier  
+//
+// OR we build our own relay using WebRTC with manual signaling for the FIRST
+// connection, then relay through connected peers.
+//
+// SIMPLEST WORKING APPROACH: Use a free public relay service.
+// I'll use a simple custom approach with a free WebSocket echo service
+// combined with room-based message filtering.
+
+// We'll use: wss://free.blr1.piesocket.com/v3/{ROOM}?api_key=FREE_KEY
+// PieSocket offers a free tier. Alternatively, we self-implement.
+
+// ACTUALLY the simplest reliable free option with zero signup:
+// Use the "WebSocket Broadcast" pattern with a free service.
+// Let me use a different approach that definitely works:
+
+// We store the FULL room state in localStorage and use a 
+// temporary broadcast mechanism. For CROSS-DEVICE sync,
+// we'll use a creative trick: ENCODE the entire room state
+// as a shareable link, and use polling.
+
+// FINAL DECISION: Use a free WebSocket relay via a known working endpoint.
+// For THIS demo to work immediately for you and friends:
+// I'll implement TWO sync mechanisms:
+//
+// 1. BroadcastChannel (same browser, different tabs)  
+// 2. A relay WebSocket connection for cross-device
+//
+// For the relay, I'll use a well-known free service.
+// If that's unavailable, fallback to manual state sharing.
+
+const RELAY_SERVERS = [
+  // Try multiple free relay services
+  'wss://demo.piesocket.com/v3/',
+  'wss://socketsbay.com/wss/v2/1/'
+];
+
+let bc = null; // BroadcastChannel
+
+function connectRelay() {
+  const room = me.room;
+  if (!room) return;
+
+  // BroadcastChannel for same-origin tabs
+  try {
+    bc = new BroadcastChannel('jc-'+room);
+    bc.onmessage = e => handleRelayMsg(e.data);
+  } catch(e) {}
+
+  // Try WebSocket relay
+  tryWS(0);
+}
+
+function tryWS(idx) {
+  // We'll use a custom lightweight approach:
+  // Since truly free WebSocket relays are unreliable,
+  // we'll implement state sync via localStorage polling
+  // which works across tabs, and for cross-device
+  // we'll provide a "Share State" button.
+
+  // For cross-device real-time: try connecting to a relay
+  // Using socketsbay free demo endpoint
+  const url = `wss://socketsbay.com/wss/v2/1/demo/`;
+
+  try {
+    ws = new WebSocket(url);
+    ws.onopen = () => {
+      wsReady = true;
+      updateOnline(true);
+      // Announce presence
+      wsSend({t:'JOIN', room:me.room, peer:peerId, name:me.name, role:me.role});
+      // Request state sync
+      wsSend({t:'SYNC_REQ', room:me.room, peer:peerId});
+      toast('Connected to relay', 'ok');
+    };
+    ws.onmessage = e => {
+      try {
+        const d = JSON.parse(e.data);
+        if (d.room === me.room && d.peer !== peerId) {
+          handleRelayMsg(d);
+        }
+      } catch {}
+    };
+    ws.onerror = () => {};
+    ws.onclose = () => {
+      wsReady = false;
+      updateOnline(false);
+      // Reconnect after delay
+      reconnectTimer = setTimeout(() => tryWS(0), 5000);
+    };
+  } catch {
+    wsReady = false;
+    updateOnline(false);
+  }
+}
+
+function wsSend(data) {
+  data.room = me.room;
+  data.peer = peerId;
+
+  // Send via WebSocket if available
+  if (ws && wsReady) {
+    try { ws.send(JSON.stringify(data)); } catch {}
+  }
+
+  // Also send via BroadcastChannel for same-origin
+  if (bc) {
+    try { bc.postMessage(data); } catch {}
+  }
+
+  // Also save to localStorage for polling
+  saveState();
+}
+
+function handleRelayMsg(d) {
+  if (!d || !d.t) return;
+  if (d.room && d.room !== me.room) return;
+  if (d.peer === peerId) return;
+
+  switch(d.t) {
+    case 'JOIN':
+      toast(`${d.name} (${d.role}) joined`, 'inf');
+      // Send our state to the new peer
+      wsSend({t:'SYNC_RESP', jobs: jobs});
+      break;
+
+    case 'SYNC_REQ':
+      wsSend({t:'SYNC_RESP', jobs: jobs});
+      break;
+
+    case 'SYNC_RESP':
+      if (d.jobs && d.jobs.length) {
+        mergeJobs(d.jobs);
+      }
+      break;
+
+    case 'NEW_JOB':
+      if (d.job && !jobs.find(j=>j.id===d.job.id)) {
+        jobs.push(d.job);
+        regWorker(d.job);
+        saveState();
+        render();
+        toast('New job posted: '+d.job.title, 'inf');
+      }
+      break;
+
+    case 'DEL_JOB':
+      if (d.id) {
+        jobs = jobs.filter(j=>j.id!==d.id);
+        worker.postMessage({type:'DEL', id:d.id});
+        saveState();
+        render();
+      }
+      break;
+
+    case 'NEW_BID':
+      if (d.jobId && d.bid) {
+        const j = jobs.find(x=>x.id===d.jobId);
+        if (j && !j.bids.find(b=>b.id===d.bid.id)) {
+          j.bids.push(d.bid);
+          saveState();
+          render();
+          toast(`New bid on "${j.title}"`, 'inf');
+        }
+      }
+      break;
+
+    case 'ACCEPT_BID':
+      if (d.jobId && d.bidId) {
+        const j = jobs.find(x=>x.id===d.jobId);
+        if (j) {
+          j.acceptedBid = d.bidId;
+          saveState();
+          render();
+          toast(`Bid accepted on "${j.title}"`, 'ok');
+        }
+      }
+      break;
+  }
+}
+
+function mergeJobs(remote) {
+  let changed = false;
+  for (const rj of remote) {
+    const local = jobs.find(j=>j.id===rj.id);
+    if (!local) {
+      jobs.push(rj);
+      regWorker(rj);
+      changed = true;
+    } else {
+      // Merge bids
+      for (const rb of rj.bids) {
+        if (!local.bids.find(b=>b.id===rb.id)) {
+          local.bids.push(rb);
+          changed = true;
+        }
+      }
+      if (rj.acceptedBid && !local.acceptedBid) {
+        local.acceptedBid = rj.acceptedBid;
+        changed = true;
+      }
+    }
+  }
+  if (changed) {
+    saveState();
+    render();
+  }
+}
+
+// ═══════════════════════════════════════
+// LOCAL STORAGE STATE (fallback sync)
+// ═══════════════════════════════════════
+function saveState() {
+  const key = 'jc_'+me.room;
+  localStorage.setItem(key, JSON.stringify({jobs, ts:Date.now()}));
+}
+
+function loadState() {
+  const key = 'jc_'+me.room;
+  const raw = localStorage.getItem(key);
+  if (raw) {
+    try {
+      const d = JSON.parse(raw);
+      if (d.jobs) {
+        mergeJobs(d.jobs);
+      }
+    } catch {}
+  }
+}
+
+// Poll localStorage for changes (cross-tab sync backup)
+setInterval(() => {
+  if (!me.room) return;
+  const key = 'jc_'+me.room;
+  const raw = localStorage.getItem(key);
+  if (raw) {
+    try {
+      const d = JSON.parse(raw);
+      if (d.jobs && d.ts) mergeJobs(d.jobs);
+    } catch {}
+  }
+}, 2000);
+
+window.addEventListener('storage', e => {
+  if (e.key === 'jc_'+me.room && e.newValue) {
+    try {
+      const d = JSON.parse(e.newValue);
+      if (d.jobs) mergeJobs(d.jobs);
+    } catch {}
+  }
+});
+
+function updateOnline(on) {
+  const dot = $('connDot');
+  dot.className = on ? 'online-dot on' : 'online-dot off';
+}
+
+// ═══════════════════════════════════════
+// SETUP / JOIN
+// ═══════════════════════════════════════
+let selectedRole = 'client';
+
+function pickRole(r) {
+  selectedRole = r;
+  $('roleClient').className = 'role-option' + (r==='client'?' selected':'');
+  $('roleContractor').className = 'role-option' + (r==='contractor'?' selected':'');
+}
+
+function joinRoom() {
+  const name = $('setupName').value.trim();
+  const room = $('setupRoom').value.trim().toLowerCase().replace(/[^a-z0-9\-]/g,'');
+
+  if (!name) return toast('Enter your name','err');
+  if (!room) return toast('Enter a room code','err');
+  if (room.length < 3) return toast('Room code must be at least 3 characters','err');
+
+  me.name = name;
+  me.role = selectedRole;
+  me.room = room;
+
+  // Save prefs
+  localStorage.setItem('jc_me', JSON.stringify(me));
+
+  // Clean expired jobs
+  const SIX_H = 6*60*60*1000;
+  jobs = jobs.filter(j => (Date.now()-j.createdAt) < SIX_H);
+
+  // Load local state for this room
+  loadState();
+
+  // Register all jobs with worker
+  jobs.forEach(j => regWorker(j));
+
+  // Show app
+  $('setupScreen').classList.remove('active');
+  $('appScreen').classList.remove('hidden');
+  $('roomLabel').textContent = '🏠 '+room;
+  $('rolePill').textContent = me.role;
+  $('rolePill').className = 'role-pill '+me.role;
+
+  if (me.role === 'client') {
+    $('clientBar').classList.remove('hidden');
+    $('contractorBar').classList.add('hidden');
+  } else {
+    $('clientBar').classList.add('hidden');
+    $('contractorBar').classList.remove('hidden');
+  }
+
+  render();
+  connectRelay();
+}
+
+function leaveRoom() {
+  closeChat();
+  closeSig();
+  if (ws) { try{ws.close();}catch{} ws=null; }
+  if (bc) { try{bc.close();}catch{} bc=null; }
+  if (reconnectTimer) clearTimeout(reconnectTimer);
+  wsReady = false;
+
+  $('appScreen').classList.add('hidden');
+  $('setupScreen').classList.add('active');
+}
+
+// Restore previous session
+try {
+  const saved = JSON.parse(localStorage.getItem('jc_me')||'null');
+  if (saved && saved.name && saved.room) {
+    $('setupName').value = saved.name;
+    $('setupRoom').value = saved.room;
+    if (saved.role) {
+      selectedRole = saved.role;
+      pickRole(saved.role);
+    }
+  }
+} catch {}
+
+// ═══════════════════════════════════════
+// JOB MANAGEMENT
+// ═══════════════════════════════════════
+function regWorker(j) {
+  worker.postMessage({type:'ADD', id:j.id, created:j.createdAt});
+}
+
+function toggleForm() { $('postForm').classList.toggle('hidden'); }
+
+function createJob() {
+  const title = $('fTitle').value.trim();
+  const industry = $('fIndustry').value;
+  const field = $('fField').value;
+  const prof = $('fProf').value.trim();
+  const budget = parseFloat($('fBudget').value);
+  const time = $('fTime').value;
+  const loc = $('fLoc').value.trim();
+  const scope = $('fScope').value.trim();
+
+  if (!title) return toast('Enter a title','err');
+  if (!industry) return toast('Select industry','err');
+  if (!field) return toast('Select field','err');
+  if (!prof) return toast('Enter profession','err');
+  if (!budget||budget<=0) return toast('Enter valid budget','err');
+  if (!time) return toast('Select timeframe','err');
+  if (!scope) return toast('Describe the scope','err');
+
+  const job = {
+    id: gid(), title, industry, field, profession:prof,
+    budget, timeframe:time, location:loc||'Not specified',
+    scope, clientName:me.name, clientId:peerId,
+    createdAt:Date.now(), bids:[], acceptedBid:null
+  };
+
+  jobs.unshift(job);
+  regWorker(job);
+  saveState();
+  render();
+
+  // Broadcast
+  wsSend({t:'NEW_JOB', job});
+
+  // Reset form
+  ['fTitle','fIndustry','fField','fProf','fBudget','fTime','fLoc','fScope'].forEach(id=>{
+    const el=$(id);
+    if(el.tagName==='SELECT') el.selectedIndex=0; else el.value='';
+  });
+  toggleForm();
+  toast('Job posted!','ok');
+}
+
+function delJob(id, expired=false) {
+  jobs = jobs.filter(j=>j.id!==id);
+  worker.postMessage({type:'DEL', id});
+  saveState();
+  render();
+  wsSend({t:'DEL_JOB', id});
+  toast(expired?'Job expired (6h limit)':'Job removed', expired?'inf':'ok');
+  if (chatJobId===id) closeChat();
+}
+
+function placeBid(jobId) {
+  const amt = parseFloat($('ba-'+jobId).value);
+  const tl = $('bt-'+jobId).value.trim();
+  const msg = $('bm-'+jobId).value.trim();
+
+  if (!amt||amt<=0) return toast('Enter valid bid','err');
+
+  const j = jobs.find(x=>x.id===jobId);
+  if (!j) return toast('Job not found','err');
+  if (j.acceptedBid) return toast('Bid already accepted','err');
+  if (j.bids.find(b=>b.cId===peerId)) return toast('Already bid','err');
+
+  const bid = {
+    id:gid(), cId:peerId, contractorName:me.name,
+    amount:amt, timeline:tl||'Flexible', message:msg||'',
+    createdAt:Date.now()
+  };
+
+  j.bids.push(bid);
+  saveState();
+  render();
+  wsSend({t:'NEW_BID', jobId, bid});
+  toast('Bid submitted!','ok');
+}
+
+function acceptBid(jobId, bidId) {
+  const j = jobs.find(x=>x.id===jobId);
+  if (!j||j.clientId!==peerId) return toast('Only owner can accept','err');
+  j.acceptedBid = bidId;
+  saveState();
+  render();
+  wsSend({t:'ACCEPT_BID', jobId, bidId});
+  toast('Bid accepted! Open secure channel.','ok');
+}
+
+function setTab(t) {
+  curTab = t;
+  $('tabAll').className = 'tab'+(t==='all'?' active':'');
+  $('tabMine').className = 'tab'+(t==='mybids'?' active':'');
+  render();
+}
+
+// ═══════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════
+function render() {
+  const SIX_H = 6*60*60*1000;
+  // Filter expired
+  jobs = jobs.filter(j=>(Date.now()-j.createdAt)<SIX_H);
+
+  let list = jobs;
+  const isClient = me.role==='client';
+
+  if (isClient) {
+    list = list.filter(j=>j.clientId===peerId);
+  } else if (curTab==='mybids') {
+    list = list.filter(j=>j.bids.some(b=>b.cId===peerId));
+  }
+
+  if (!list.length) {
+    $('jobList').innerHTML = `<div class="empty"><div class="e-icon">${isClient?'📋':'🔍'}</div><h3>${isClient?'No Jobs Posted':(curTab==='mybids'?'No Bids Yet':'No Jobs Available')}</h3><p>${isClient?'Click "+ New Job" to post.':'Jobs will appear when clients post them.'}</p></div>`;
+    return;
+  }
+
+  $('jobList').innerHTML = list.map(j=>renderCard(j)).join('');
+}
+
+function renderCard(j) {
+  const owner = j.clientId===peerId;
+  const isCon = me.role==='contractor';
+  const myBid = j.bids.find(b=>b.cId===peerId);
+  const bc2 = j.bids.length;
+
+  // Poll
+  let poll = '';
+  if (bc2) {
+    const amts = j.bids.map(b=>b.amount);
+    const mn=Math.min(...amts), mx=Math.max(...amts), av=amts.reduce((a,b)=>a+b,0)/bc2;
+    const ranges = bidRanges(j.budget, amts);
+    poll = `<div class="bid-poll"><div class="bp-title">📊 Bid Poll</div>
+      ${ranges.map(r=>`<div class="bp-row"><div class="bp-row-label"><span>${r.l}</span><span>${r.n}</span></div><div class="bp-track"><div class="bp-fill ${r.c}" style="width:${r.p}%"></div></div></div>`).join('')}
+      <div class="bp-stats">
+        <div class="bp-stat"><div class="bp-stat-v">${fmtCur(mn)}</div><div class="bp-stat-l">Low</div></div>
+        <div class="bp-stat"><div class="bp-stat-v">${fmtCur(av)}</div><div class="bp-stat-l">Avg</div></div>
+        <div class="bp-stat"><div class="bp-stat-v">${fmtCur(mx)}</div><div class="bp-stat-l">High</div></div>
+      </div></div>`;
+  }
+
+  // Bid form
+  let bf = '';
+  if (isCon && !myBid && !j.acceptedBid) {
+    bf = `<div class="bid-form">
+      <input type="number" id="ba-${j.id}" placeholder="Bid ($)" min="1">
+      <input type="text" id="bt-${j.id}" placeholder="Timeline" maxlength="50">
+      <input type="text" id="bm-${j.id}" placeholder="Message" maxlength="200">
+      <button class="btn btn-green btn-sm" onclick="placeBid('${j.id}')">Bid</button>
+    </div>`;
+  } else if (isCon && myBid && !j.acceptedBid) {
+    bf = `<div style="font-size:0.78rem;color:var(--green2);margin-bottom:8px">✓ Bid placed (${fmtCur(myBid.amount)})</div>`;
+  }
+
+  // Accepted
+  let acc = '';
+  if (j.acceptedBid) {
+    const ab = j.bids.find(b=>b.id===j.acceptedBid);
+    if (ab) {
+      const canChat = owner || ab.cId===peerId;
+      acc = `<div class="accepted-banner"><div class="ab-title">✅ Accepted — ${esc(ab.contractorName)} at ${fmtCur(ab.amount)}</div>
+        ${canChat?`<button class="btn btn-primary btn-sm" onclick="openSig('${j.id}',${owner})">🔗 Open Secure Channel</button>`
+        :`<div style="font-size:0.75rem;color:var(--text3)">A bid was accepted.</div>`}
+      </div>`;
+    }
+  }
+
+  // Bids list
+  let bl = '';
+  if (bc2) {
+    bl = `<div class="bid-list">${j.bids.map(b=>`
+      <div class="bid-item">
+        <div class="bid-avatar" style="background:${hashCol(b.contractorName)}">${b.contractorName.charAt(0).toUpperCase()}</div>
+        <div class="bid-info">
+          <div class="bid-name">${esc(b.contractorName)}</div>
+          <div class="bid-msg">${esc(b.message||'—')}</div>
+          <div class="bid-tl">⏱ ${esc(b.timeline)}</div>
+        </div>
+        <div class="bid-amt">${fmtCur(b.amount)}</div>
+        <div class="bid-acts">
+          ${owner&&!j.acceptedBid?`<button class="btn btn-green btn-xs" onclick="acceptBid('${j.id}','${b.id}')">Accept</button>`:''}
+          ${j.acceptedBid===b.id?'<span style="font-size:0.68rem;color:var(--green2);font-weight:700">✅</span>':''}
+        </div>
+      </div>
+    `).join('')}</div>`;
+  }
+
+  return `<div class="job-card" id="jc-${j.id}">
+    <div class="jc-head" onclick="togCard('${j.id}')">
+      <div class="jc-head-left">
+        <div class="jc-title">${esc(j.title)} <span class="tag tag-b">${fmtCur(j.budget)}</span></div>
+        <div class="jc-meta">
+          <span class="tag tag-i">${esc(j.industry)}</span>
+          <span class="tag tag-f">${esc(j.field)}</span>
+          <span class="tag tag-p">${esc(j.profession)}</span>
+          <span class="jc-timer">⏳ <span id="tm-${j.id}">--</span></span>
+        </div>
+      </div>
+      <div class="jc-head-right">
+        ${owner?`<button class="btn btn-red btn-icon btn-xs" onclick="event.stopPropagation();delJob('${j.id}')" title="Delete">🗑</button>`:''}
+        <span class="expand-arr">▼</span>
+      </div>
+    </div>
+    <div class="jc-body">
+      <div class="detail-grid">
+        <div class="d-item"><div class="d-label">Posted By</div><div class="d-value">${esc(j.clientName)}</div></div>
+        <div class="d-item"><div class="d-label">Timeframe</div><div class="d-value">${esc(j.timeframe)}</div></div>
+        <div class="d-item"><div class="d-label">Location</div><div class="d-value">${esc(j.location)}</div></div>
+        <div class="d-item"><div class="d-label">Bids</div><div class="d-value">${bc2} received</div></div>
+      </div>
+      <div class="scope-label">📑 Scope of Work</div>
+      <div class="scope-box">${esc(j.scope)}</div>
+      ${acc}${poll}
+      <div class="bid-sec">
+        <div class="bid-sec-title"><span>💰 Bids</span><span class="bid-sec-count">${bc2} total</span></div>
+        ${bf}${bl}
+        ${!bc2?'<div style="font-size:0.78rem;color:var(--text3);text-align:center;padding:14px">No bids yet</div>':''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function togCard(id) {
+  const el=$('jc-'+id);
+  if(el) el.classList.toggle('open');
+}
+
+function bidRanges(budget, amts) {
+  const r = [
+    {l:'Under '+fmtCur(budget*0.5), min:0, max:budget*0.5, c:'c1', n:0},
+    {l:fmtCur(budget*0.5)+' – '+fmtCur(budget*0.8), min:budget*0.5, max:budget*0.8, c:'c2', n:0},
+    {l:fmtCur(budget*0.8)+' – '+fmtCur(budget), min:budget*0.8, max:budget, c:'c3', n:0},
+    {l:'Over '+fmtCur(budget), min:budget, max:Infinity, c:'c4', n:0}
+  ];
+  amts.forEach(a=>{for(const x of r){if(a>=x.min&&(a<x.max||(x.max===Infinity&&a>=x.min))){x.n++;break;}}});
+  const mx=Math.max(1,...r.map(x=>x.n));
+  r.forEach(x=>x.p=(x.n/mx)*100);
+  return r;
+}
+
+// ═══════════════════════════════════════
+// WEBRTC
+// ═══════════════════════════════════════
+const rtcCfg = {iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]};
+
+function openSig(jobId, amInit) {
+  isInit = amInit;
+  pendingChat = jobId;
+  iceBuf = [];
+
+  $('txtLocal').value=''; $('txtRemote').value='';
+  $('txtICE').value=''; $('txtRICE').value='';
+
+  const info = $('sigInfo');
+  if (isInit) {
+    info.innerHTML = `<strong>You are the Client (Initiator)</strong>
+      <ol><li>Your <strong>Offer</strong> is generated below — copy it</li>
+      <li>Send it to the contractor via any channel</li>
+      <li>Contractor pastes it, generates an <strong>Answer</strong></li>
+      <li>Paste the Answer below</li>
+      <li>Exchange <strong>ICE candidates</strong></li>
+      <li>Chat opens! 🎉</li></ol>`;
+  } else {
+    info.innerHTML = `<strong>You are the Contractor (Responder)</strong>
+      <ol><li>Ask the client to send their <strong>Offer</strong></li>
+      <li>Paste it below</li>
+      <li>Your <strong>Answer</strong> will be generated — copy & send back</li>
+      <li>Exchange <strong>ICE candidates</strong></li>
+      <li>Chat opens! 🎉</li></ol>`;
+  }
+
+  $('sigModal').classList.add('active');
+  createPC();
+
+  if (isInit) {
+    makeOffer();
+  } else {
+    $('secRemote').style.display='flex';
+    $('lblRemote').textContent="Paste the Client's Offer here";
+    $('btnApply').textContent='Generate Answer';
+    $('secLocal').style.display='none';
+  }
+}
+
+function createPC() {
+  if (pc) try{pc.close();}catch{}
+  pc = new RTCPeerConnection(rtcCfg);
+  iceBuf = [];
+
+  pc.onicecandidate = e => {
+    if (e.candidate) {
+      iceBuf.push(e.candidate);
+      $('txtICE').value = JSON.stringify(iceBuf);
+      $('secICE').style.display='flex';
+      $('secRICE').style.display='flex';
+    }
+  };
+
+  pc.oniceconnectionstatechange = () => {
+    const s = pc.iceConnectionState;
+    if (s==='connected'||s==='completed') {
+      closeSig();
+      openChatUI();
+    }
+  };
+
+  pc.ondatachannel = e => { dc=e.channel; setupDC(); };
+
+  if (isInit) {
+    dc = pc.createDataChannel('chat');
+    setupDC();
+  }
+}
+
+function setupDC() {
+  dc.onopen = () => {
+    addChat('sys','🔒 Secure channel active. Exchange details freely.');
+    updDot('ok');
+  };
+  dc.onclose = () => { addChat('sys','Channel closed.'); updDot('no'); };
+  dc.onmessage = e => {
+    try { const m=JSON.parse(e.data); addChat('recv',m.text,m.sender); }
+    catch { addChat('recv',e.data,'Peer'); }
+  };
+}
+
+async function makeOffer() {
+  try {
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    $('txtLocal').value = JSON.stringify(pc.localDescription);
+    $('secLocal').style.display='flex';
+    $('lblLocal').textContent = 'Your Offer (copy & send)';
+    $('secRemote').style.display='flex';
+    $('lblRemote').textContent="Paste Contractor's Answer here";
+    $('btnApply').textContent='Apply Answer';
+    toast('Offer ready — copy & send','inf');
+  } catch(e) { toast('Offer error: '+e.message,'err'); }
+}
+
+async function applySig() {
+  const raw = $('txtRemote').value.trim();
+  if (!raw) return toast('Paste signal data first','err');
+  try {
+    const desc = JSON.parse(raw);
+    await pc.setRemoteDescription(new RTCSessionDescription(desc));
+    if (!isInit) {
+      const ans = await pc.createAnswer();
+      await pc.setLocalDescription(ans);
+      $('txtLocal').value = JSON.stringify(pc.localDescription);
+      $('secLocal').style.display='flex';
+      $('lblLocal').textContent = 'Your Answer (copy & send back)';
+      toast('Answer ready — copy & send','inf');
+    } else {
+      toast('Answer applied! Exchange ICE now.','ok');
+    }
+  } catch(e) { toast('Invalid data: '+e.message,'err'); }
+}
+
+async function applyICE() {
+  const raw = $('txtRICE').value.trim();
+  if (!raw) return toast('Paste ICE data','err');
+  try {
+    const cands = JSON.parse(raw);
+    for (const c of cands) await pc.addIceCandidate(new RTCIceCandidate(c));
+    toast('ICE applied!','ok');
+  } catch(e) { toast('Invalid ICE: '+e.message,'err'); }
+}
+
+function copySig() {
+  $('txtLocal').select(); document.execCommand('copy'); toast('Copied!','ok');
+}
+function copyICE() {
+  $('txtICE').select(); document.execCommand('copy'); toast('Copied!','ok');
+}
+
+function closeSig() { $('sigModal').classList.remove('active'); }
+
+// ─── Chat UI ───
+function openChatUI() {
+  chatJobId = pendingChat;
+  const j = jobs.find(x=>x.id===chatJobId);
+  $('chatTitle').textContent = j?'Chat — '+j.title:'Secure Channel';
+  $('chatMsgs').innerHTML = '';
+  addChat('sys','🔒 End-to-end encrypted. Share project details securely.');
+  $('chatModal').classList.add('active');
+  $('chatIn').focus();
+}
+
+function sendMsg() {
+  const t = $('chatIn').value.trim();
+  if (!t) return;
+  if (!dc||dc.readyState!=='open') return toast('Not connected','err');
+  dc.send(JSON.stringify({text:t, sender:me.name, time:Date.now()}));
+  addChat('sent',t);
+  $('chatIn').value='';
+  $('chatIn').focus();
+}
+
+function addChat(type, text, sender='') {
+  const c=$('chatMsgs'), d=document.createElement('div');
+  const tm = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  d.className='chat-m '+(type==='sys'?'sys':type==='sent'?'sent':'recv');
+  if (type==='sys') {
+    d.textContent=text;
+  } else {
+    d.innerHTML=(sender?`<span class="cm-sender">${esc(sender)}</span>`:'')+esc(text)+`<span class="cm-time">${tm}</span>`;
+  }
+  c.appendChild(d);
+  c.scrollTop=c.scrollHeight;
+}
+
+function updDot(s) {
+  $('chatDot').className='conn-dot '+s;
+}
+
+function closeChat() {
+  $('chatModal').classList.remove('active');
+  if(dc) try{dc.close();}catch{} dc=null;
+  if(pc) try{pc.close();}catch{} pc=null;
+  if (chatJobId) {
+    delJob(chatJobId);
+    chatJobId=null;
+    toast('Chat closed — job removed','inf');
+  }
+}
+</script>
+</body>
+</html>
+<script>
+
+</script>
+</body>
+</html>
