@@ -1,0 +1,9 @@
+# wrangler.toml — deploy config for the Co-connect signaling worker.
+# Deploy with:  npx wrangler deploy
+# (wrangler is a deploy-time tool only; the runtime has ZERO dependencies)
+
+name = "co-connect-signal"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# No bindings, no KV, no D1, no Durable Objects — stateless by mandate.
